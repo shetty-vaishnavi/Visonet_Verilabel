@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriLabel AI &bull; Regulatory Packaging Audit Terminal</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+    <!-- Chart.js for High-Precision Telemetry Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+</head>
+<body class="app-terminal-shell">
+
+    <!-- ==============================================================================
+         1. ELEGANT WHITE NAVIGATION HEADER
+         ============================================================================== -->
+    <header class="app-header no-print">
+        <div class="header-left">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-sidebar-toggle" onclick="toggleSidebar()" title="Toggle Sidebar" style="padding: 0.45rem; border-color: var(--color-border);">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
+            </button>
+            <a href="#dashboard" class="header-brand" onclick="navigateTo('view-dashboard', event)">
+                <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Emblem" class="header-brand-img">
+                <div>
+                    <div class="header-brand-title">VeriLabel AI</div>
+                    <div class="header-brand-subtitle">Regulatory Audit Terminal</div>
+                </div>
+            </a>
+            <span class="header-version-pill">VeriLabel Console</span>
+        </div>
+
+        <div class="header-right">
+            <!-- Global Run / Label Search -->
+            <div class="header-search-box">
+                <svg class="header-search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                <input type="text" id="topbar-search" class="header-search-input" placeholder="Load saved Run ID..." oninput="handleGlobalSearch(event)">
+            </div>
+
+            <!-- Notifications Icon -->
+            <button type="button" class="btn btn-secondary btn-sm" onclick="navigateTo('view-review')" title="Pending Human Reviews" style="padding: 0.45rem 0.65rem;">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
+                <span class="badge badge-neutral" id="sidebar-pending-count" style="font-size: 0.68rem; padding: 0.1rem 0.35rem;">0</span>
+            </button>
+
+            <!-- Auditor Profile Badge & Sign Out -->
+            <div class="header-auditor-pill">
+                <div class="auditor-avatar-circle" id="sidebar-avatar-letter">?</div>
+                <div class="auditor-meta">
+                    <div class="auditor-name" id="topbar-user-name">Not signed in</div>
+                </div>
+                <span id="sidebar-user-name" style="display: none;">Not signed in</span>
+                <span id="sidebar-user-role" style="display: none;">Guest</span>
+                <span id="topbar-active-page" style="display: none;">Overview</span>
+
+                <button type="button" id="btn-auth-action" onclick="handleHeaderAuthAction()" class="btn btn-secondary btn-sm" style="color: var(--color-error); border-color: var(--color-border); margin-left: 0.5rem;" title="Sign out or sign in">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+                    <span id="btn-auth-action-label">Sign In</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- ==============================================================================
+         2. MAIN APPLICATION BODY: SIDEBAR + VIEWPORT
+         ============================================================================== -->
+    <div class="app-terminal-body">
+        
+        <!-- MODERN COMPACT SIDEBAR (LINEAR / STRIPE STYLE) -->
+        <aside class="app-sidebar no-print" id="app-sidebar">
+            <div class="sidebar-scroll-area">
+                
+                <!-- Group 1: Workspace -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Workspace</div>
+
+                    <a href="#dashboard" class="sidebar-nav-item active" data-view="view-dashboard" onclick="navigateTo('view-dashboard', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        </span>
+                        <span class="nav-label">Overview</span>
+                    </a>
+
+                    <a href="#fields" class="sidebar-nav-item" data-view="view-fields" onclick="navigateTo('view-fields', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
+                        </span>
+                        <span class="nav-label">Required Fields</span>
+                        <span class="nav-badge" style="background: rgba(37, 99, 235, 0.15); color: var(--color-blue); font-size: 0.65rem;">Blueprint</span>
+                    </a>
+
+                    <a href="#ingestion" class="sidebar-nav-item" data-view="view-ingestion" onclick="navigateTo('view-ingestion', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                        </span>
+                        <span class="nav-label">Label Ingestion</span>
+                    </a>
+
+                    <a href="#ocr" class="sidebar-nav-item" data-view="view-ocr" onclick="navigateTo('view-ocr', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                        </span>
+                        <span class="nav-label">OCR Extraction</span>
+                    </a>
+
+                    <a href="#visual" class="sidebar-nav-item" data-view="view-visual" onclick="navigateTo('view-visual', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
+                        </span>
+                        <span class="nav-label">Visual Inspection</span>
+                    </a>
+
+                    <a href="#barcode" class="sidebar-nav-item" data-view="view-barcode" onclick="navigateTo('view-barcode', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="11" y1="8" x2="11" y2="16"></line><line x1="15" y1="8" x2="15" y2="16"></line></svg>
+                        </span>
+                        <span class="nav-label">Barcode / UDI</span>
+                    </a>
+                </div>
+
+                <!-- Group 2: Verification -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Verification</div>
+
+                    <a href="#compliance" class="sidebar-nav-item" data-view="view-compliance" onclick="navigateTo('view-compliance', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"></path><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        </span>
+                        <span class="nav-label">Compliance Results</span>
+                    </a>
+
+                    <a href="#review" class="sidebar-nav-item" data-view="view-review" onclick="navigateTo('view-review', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                        </span>
+                        <span class="nav-label">Human Review</span>
+                        <span class="nav-badge" id="sidebar-review-badge">0</span>
+                    </a>
+
+                    <a href="#ledger" class="sidebar-nav-item" data-view="view-ledger" onclick="navigateTo('view-ledger', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
+                        </span>
+                        <span class="nav-label">Audit Ledger</span>
+                    </a>
+                </div>
+
+                <!-- Group 3: Management -->
+                <div class="sidebar-section">
+                    <div class="sidebar-section-title">Management</div>
+
+                    <a href="#reports" class="sidebar-nav-item" data-view="view-reports" onclick="navigateTo('view-reports', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        </span>
+                        <span class="nav-label">Reports</span>
+                    </a>
+
+                    <a href="#history" class="sidebar-nav-item" data-view="view-history" onclick="navigateTo('view-history', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                        </span>
+                        <span class="nav-label">History</span>
+                    </a>
+
+                    <a href="#settings" class="sidebar-nav-item" data-view="view-settings" onclick="navigateTo('view-settings', event)">
+                        <span class="nav-icon">
+                            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>
+                        </span>
+                        <span class="nav-label">Settings</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Sidebar Footer Toggle -->
+            <div class="sidebar-footer-toggle">
+                <button type="button" class="sidebar-toggle-btn" onclick="toggleSidebar()">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="15 18 9 12 15 6"></polyline></svg>
+                    <span>Collapse Sidebar</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- MAIN VIEWPORT CONTENT -->
+        <main class="app-viewport">
+            <div class="app-content-container">
+
+                <!-- ======================================================================
+                     VIEW 1: OVERVIEW DASHBOARD
+                     ====================================================================== -->
+                <section id="view-dashboard" class="page-view active">
+                    
+                    <!-- Welcome Banner -->
+                    <div class="white-card" style="padding: 1.5rem 1.75rem; background: #FFFFFF; border-left: 4px solid var(--color-blue); margin-bottom: 1.5rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                            <div>
+                                <h1 style="font-size: 1.35rem; font-weight: 800; color: var(--color-navy); margin-bottom: 0;" id="dashboard-welcome-title">
+                                    Regulatory Audit Console
+                                </h1>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <span class="badge badge-neutral" style="font-size: 0.75rem; padding: 0.35rem 0.65rem;" id="dashboard-today-badge">
+                                    Live DB Sync
+                                </span>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                    <span>Upload & Analyze Label</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty DB State Notice (shown only when 0 records in SQLite) -->
+                    <div id="dashboard-empty-banner" class="white-card" style="display: none; background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); text-align: center; padding: 2rem; margin-bottom: 1.5rem;">
+                        <div style="font-weight: 700; font-size: 1rem; color: var(--color-navy); margin-bottom: 0.35rem;">No validations have been saved in the database yet</div>
+                        <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                            Dashboard counts are computed directly from saved SQLite validation records. Upload a label or choose a sample file and click Analyze to create your first validation record.
+                        </p>
+                        <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Go to Label Ingestion &rarr;</button>
+                    </div>
+
+                    <!-- 5 Metric Cards (Initialized to 0, populated strictly from /api/dashboard/stats) -->
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 1.15rem; margin-bottom: 1.75rem;">
+                        <div class="white-card" style="margin-bottom: 0; padding: 1.25rem;">
+                            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.04em;">Total Labels Analysed</div>
+                            <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; color: var(--color-text-main); margin-top: 0.35rem;" id="kpi-total-scans">0</div>
+                            <div style="font-size: 0.72rem; color: var(--color-text-light); margin-top: 0.2rem;">Actual rows in SQLite ledger</div>
+                        </div>
+                        <div class="white-card" style="margin-bottom: 0; padding: 1.25rem;">
+                            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-success); letter-spacing: 0.04em;">Compliant Labels</div>
+                            <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; color: var(--color-success); margin-top: 0.35rem;" id="kpi-compliant-scans">0</div>
+                            <div style="font-size: 0.72rem; color: var(--color-success); margin-top: 0.2rem;">Verdict: COMPLIANT</div>
+                        </div>
+                        <div class="white-card" style="margin-bottom: 0; padding: 1.25rem;">
+                            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-error); letter-spacing: 0.04em;">Failed Checks</div>
+                            <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; color: var(--color-error); margin-top: 0.35rem;" id="kpi-non-compliant-scans">0</div>
+                            <div style="font-size: 0.72rem; color: var(--color-error); margin-top: 0.2rem;">Verdict: NON_COMPLIANT</div>
+                        </div>
+                        <div class="white-card" style="margin-bottom: 0; padding: 1.25rem;">
+                            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-blue); letter-spacing: 0.04em;">Pending Reviews</div>
+                            <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; color: var(--color-blue); margin-top: 0.35rem;" id="kpi-pending-reviews">0</div>
+                            <div style="font-size: 0.72rem; color: var(--color-text-muted); margin-top: 0.2rem;">Awaiting human review decision</div>
+                        </div>
+                        <div class="white-card" style="margin-bottom: 0; padding: 1.25rem;">
+                            <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); letter-spacing: 0.04em;">Compliance Rate</div>
+                            <div style="font-family: var(--font-heading); font-size: 1.85rem; font-weight: 800; color: var(--color-text-main); margin-top: 0.35rem;" id="kpi-pass-rate">0%</div>
+                            <div style="font-size: 0.72rem; color: var(--color-text-light); margin-top: 0.2rem;">Compliant / total validations</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row (Strictly computed from SQLite rows) -->
+                    <div style="display: grid; grid-template-columns: 1fr 1.6fr; gap: 1.5rem; margin-bottom: 1.75rem;">
+                        <div class="white-card" style="margin-bottom: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Verdict Distribution (Database)</div>
+                                <span class="badge badge-info">SQLite</span>
+                            </div>
+                            <div style="height: 230px; position: relative;">
+                                <canvas id="chart-compliance-donut"></canvas>
+                                <div id="chart-donut-empty" style="display: none; position: absolute; inset: 0; align-items: center; justify-content: center; color: var(--color-text-muted); font-size: 0.85rem; text-align: center;">No validations saved yet.</div>
+                            </div>
+                        </div>
+                        <div class="white-card" style="margin-bottom: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Validation Volume by Date (Database)</div>
+                                <span class="badge badge-neutral">Actual History</span>
+                            </div>
+                            <div style="height: 230px; position: relative;">
+                                <canvas id="chart-audit-trend"></canvas>
+                                <div id="chart-trend-empty" style="display: none; position: absolute; inset: 0; align-items: center; justify-content: center; color: var(--color-text-muted); font-size: 0.85rem; text-align: center;">No validations saved yet.</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Analysis Table & Recent Activity Feed -->
+                    <div style="display: grid; grid-template-columns: 1.7fr 1fr; gap: 1.5rem;">
+                        <div class="white-card" style="margin-bottom: 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Latest Saved Validation Runs</div>
+                                <a href="#ledger" onclick="navigateTo('view-ledger', event)" style="font-size: 0.8rem; font-weight: 600;">View Full Ledger &rarr;</a>
+                            </div>
+                            <div class="ledger-table-wrapper" style="margin-top: 0;">
+                                <table class="ledger-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Run ID</th>
+                                            <th>Document</th>
+                                            <th>Verdict</th>
+                                            <th>Score</th>
+                                            <th>Review Status</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="dashboard-recent-table">
+                                        <tr><td colspan="6" style="text-align: center; color: var(--color-text-muted); padding: 1.25rem;">Loading saved records...</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="white-card" style="margin-bottom: 0;">
+                            <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy); margin-bottom: 1rem;">Recent Saved Activity</div>
+                            <div id="dashboard-activity-feed" style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 330px; overflow-y: auto;">
+                                <div style="color: var(--color-text-muted); font-size: 0.82rem;">Loading activity...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 2: LABEL INGESTION PAGE
+                     ====================================================================== -->
+                <section id="view-ingestion" class="page-view">
+                    
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Label Document Ingestion</h1>
+                                <p class="card-subtitle-desc">
+                                    Select a packaging label file (PDF, PNG, JPG) or choose an available repository sample, then click <strong>Analyze</strong> to run the backend verification pipeline.
+                                </p>
+                            </div>
+
+                            <!-- Device Baseline Dropdown loaded strictly from /api/products -->
+                            <div style="display: flex; align-items: center; gap: 0.65rem;">
+                                <label for="ingest-product-code" style="font-size: 0.78rem; font-weight: 700; color: var(--color-text-main); text-transform: uppercase;">Product Baseline:</label>
+                                <select id="ingest-product-code" class="form-select" style="min-width: 260px; font-weight: 600;">
+                                    <option value="">None (General Regulatory Check)</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- Hidden File Input -->
+                        <input type="file" id="ingest-file-input" accept=".pdf,.png,.jpg,.jpeg,.bmp,.tiff" style="display: none;" onchange="handleIngestFileSelected(event)">
+
+                        <!-- Large Drag-and-Drop Upload Zone -->
+                        <div class="upload-dropzone-box" id="ingest-dropzone" onclick="document.getElementById('ingest-file-input').click()">
+                            <div class="upload-icon-circle">
+                                <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                            </div>
+                            <div class="upload-prompt-primary" id="ingest-drop-text">Click to upload or drag &amp; drop packaging label document</div>
+                            <div class="upload-prompt-secondary">Supported formats: PDF, PNG, JPG, BMP, TIFF (up to 25 MB)</div>
+                        </div>
+
+                        <!-- Upload Preview Card -->
+                        <div id="ingest-preview-card" style="display: none; align-items: center; justify-content: space-between; background: var(--color-surface-sub); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.85rem 1.15rem; margin-bottom: 1.25rem;">
+                            <div style="display: flex; align-items: center; gap: 0.75rem;">
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="var(--color-blue)" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                                <div>
+                                    <div id="ingest-file-name" style="font-weight: 700; font-size: 0.88rem; color: var(--color-text-main);"></div>
+                                    <div id="ingest-file-details" style="font-size: 0.75rem; color: var(--color-text-muted);"></div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="clearSelectedIngestFile()" style="color: var(--color-error); border-color: var(--color-border);">
+                                Remove Selection
+                            </button>
+                        </div>
+
+                        <!-- Repository Sample Label Files (loaded from /api/samples, none auto-selected) -->
+                        <div class="test-cases-section">
+                            <div class="test-cases-heading">Or Select an Existing Sample Label File from Repository:</div>
+                            <div class="test-cases-button-grid" id="sample-catalog-buttons">
+                                <span style="font-size: 0.8rem; color: var(--color-text-muted);">Loading available sample files...</span>
+                            </div>
+                        </div>
+
+                        <!-- Execution Footer Row -->
+                        <div class="execution-footer-row">
+                            <div class="active-selection-status" id="ingest-active-status">
+                                Selection: <strong style="color: var(--color-text-muted);" id="ingest-selected-label-name">No label selected yet</strong>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-lg" id="btn-execute-audit" onclick="executeAuditWorkflow()" disabled>
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                                <span>Analyze</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Live Progress Workflow Drawer -->
+                    <div id="ingestion-progress-drawer" class="audit-progress-card" style="display: none;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <div>
+                                <div style="font-weight: 700; color: var(--color-blue); font-size: 0.95rem;" id="runner-stage-title">Running VeriLabel Backend Verification Pipeline...</div>
+                                <div style="font-size: 0.8rem; color: var(--color-text-muted);" id="runner-stage-desc">Waiting for backend response from POST /api/verify...</div>
+                            </div>
+                            <span class="badge badge-info">Processing</span>
+                        </div>
+                        <div class="progress-track">
+                            <div class="progress-bar-fill" id="audit-progress-fill" style="width: 30%;"></div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <!-- ======================================================================
+                     VIEW: MANDATORY PACKAGING FIELDS (BACKEND & DB CONNECTED)
+                     ====================================================================== -->
+                <section id="view-fields" class="page-view">
+                    <div class="white-card" style="margin-bottom: 1.5rem;">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <div style="display: flex; align-items: center; gap: 0.5rem;">
+                                    <h1 class="card-title-text">Mandatory Regulatory Fields</h1>
+                                    <span class="badge badge-neutral" id="fields-active-run-badge">No analysis yet</span>
+                                </div>
+                                <p class="card-subtitle-desc">
+                                    Displays fields strictly returned by the VeriLabel backend pipeline or loaded from a saved SQLite validation record.
+                                </p>
+                            </div>
+
+                            <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                                <select id="fields-run-selector" class="form-select" style="min-width: 240px; font-size: 0.8rem;" onchange="handleFieldsRunSelect(event)">
+                                    <option value="">-- Select a saved validation --</option>
+                                </select>
+                                <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Analyze New Label</button>
+                            </div>
+                        </div>
+
+                        <!-- Empty State Notice -->
+                        <div id="fields-empty-state" style="background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); border-radius: var(--radius-sm); padding: 2rem; text-align: center; margin-top: 1rem;">
+                            <div style="font-weight: 700; color: var(--color-navy); font-size: 1rem; margin-bottom: 0.35rem;">No analysis yet</div>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Upload a packaging label on the Label Ingestion page and click <strong>Analyze</strong>, or select a saved validation record from the dropdown above.
+                            </p>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Go to Label Ingestion &rarr;</button>
+                        </div>
+
+                        <!-- Populated Results Grid (Hidden until analyzed or loaded from DB) -->
+                        <div id="fields-results-workspace" style="display: none; margin-top: 1.25rem;">
+                            <div style="display: grid; grid-template-columns: 44% 56%; gap: 1.25rem; align-items: start;">
+                                <!-- Left: Actual Analyzed Label Image & File Metadata -->
+                                <div class="data-panel-card">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.6rem;">
+                                        <span style="font-weight: 700; font-size: 0.9rem; color: var(--color-navy);">Analyzed Document Preview</span>
+                                        <span class="badge badge-info" id="fields-verdict-pill">--</span>
+                                    </div>
+                                    <div class="viewport-panel" style="min-height: 260px; display: flex; align-items: center; justify-content: center;">
+                                        <img id="fields-label-preview-img" class="viewport-image" src="" alt="Analyzed label preview" style="display: none;">
+                                        <div id="fields-no-image-msg" style="font-size: 0.82rem; color: var(--color-text-muted); text-align: center; padding: 1.5rem;">
+                                            Image preview not available for this saved record.
+                                        </div>
+                                    </div>
+                                    <div id="fields-file-meta-box" style="font-size: 0.78rem; color: var(--color-text-muted); display: flex; flex-direction: column; gap: 0.25rem;"></div>
+                                </div>
+
+                                <!-- Right: Real Backend Extracted Attributes -->
+                                <div class="data-panel-card">
+                                    <div style="display: flex; gap: 0.5rem; margin-bottom: 0.5rem;">
+                                        <input type="text" id="field-search-input" class="header-search-input" placeholder="Filter extracted fields..." style="flex: 1;" oninput="handleFieldSearch(event)">
+                                        <select id="field-status-filter" class="form-select" style="width: 145px; font-size: 0.78rem;" onchange="handleFieldStatusFilter(event)">
+                                            <option value="all">All Statuses</option>
+                                            <option value="DETECTED">Detected</option>
+                                            <option value="NOT_DETECTED">Not Detected</option>
+                                        </select>
+                                    </div>
+                                    <div id="required-fields-deck" class="fields-deck-scrollable" style="max-height: 520px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.55rem;"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section id="view-ocr" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">OCR Text &amp; Field Extraction</h1>
+                                <p class="card-subtitle-desc">Inspection of actual OCR output and structured fields extracted by the VeriLabel backend.</p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="navigateTo('view-visual')">Visual Inspection &rarr;</button>
+                            </div>
+                        </div>
+
+                        <div id="ocr-empty-state" style="background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); border-radius: var(--radius-sm); padding: 2rem; text-align: center;">
+                            <div style="font-weight: 700; color: var(--color-navy); font-size: 1rem; margin-bottom: 0.35rem;">No analysis yet</div>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Upload a label on the Label Ingestion page and click <strong>Analyze</strong>, or select a saved validation record from the Audit Ledger.
+                            </p>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Upload &amp; Analyze Label</button>
+                        </div>
+
+                        <div id="ocr-results-body" style="display: none;">
+                            <div id="ocr-diagnostic-alert" style="display: none; background: var(--color-warning-soft); border: 1px solid var(--color-warning-bd); border-radius: var(--radius-sm); padding: 0.85rem 1rem; margin-bottom: 1rem; font-size: 0.82rem; color: var(--color-text-main);"></div>
+
+                            <div class="split-inspection-grid">
+                                <!-- Left: Label Canvas & Raw OCR Lines -->
+                                <div style="display: flex; flex-direction: column; gap: 1rem;">
+                                    <div class="viewport-panel" style="display: flex; align-items: center; justify-content: center; min-height: 240px;">
+                                        <img id="ocr-canvas-img" class="viewport-image" src="" alt="Packaging Document" style="display: none;">
+                                        <div id="ocr-no-img-msg" style="color: var(--color-text-muted); font-size: 0.82rem;">Image preview unavailable</div>
+                                    </div>
+                                    <div class="data-panel-card">
+                                        <div style="font-weight: 700; font-size: 0.85rem; color: var(--color-navy); margin-bottom: 0.35rem;">Raw Extracted OCR Text</div>
+                                        <pre id="ocr-raw-text-box" class="mono" style="background: var(--color-surface-sub); border: 1px solid var(--color-border); padding: 0.75rem; border-radius: var(--radius-xs); font-size: 0.76rem; white-space: pre-wrap; max-height: 200px; overflow-y: auto; margin: 0;">Not analyzed yet</pre>
+                                    </div>
+                                </div>
+
+                                <!-- Right: Extracted Attributes -->
+                                <div class="data-panel-card">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                                        <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Structured Extracted Fields</div>
+                                        <span class="badge badge-neutral" id="ocr-engine-badge">Not analyzed</span>
+                                    </div>
+
+                                    <div style="display: flex; flex-direction: column; gap: 0.65rem;">
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Trade / Product Name</span>
+                                            <span class="field-value-text" id="ocr-field-product">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Legal Manufacturer</span>
+                                            <span class="field-value-text" id="ocr-field-manufacturer">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Batch / Lot Identifier</span>
+                                            <span class="field-value-text mono" id="ocr-field-lot">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Expiration Date (EXP)</span>
+                                            <span class="field-value-text mono" id="ocr-field-expiry">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Manufacturing Date (MFG)</span>
+                                            <span class="field-value-text mono" id="ocr-field-mfg">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Catalogue REF Code</span>
+                                            <span class="field-value-text mono" id="ocr-field-catalog">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Serial Number (SN)</span>
+                                            <span class="field-value-text mono" id="ocr-field-serial">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Sterility Claim</span>
+                                            <span class="field-value-text" id="ocr-field-sterile">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Single-Use Declaration</span>
+                                            <span class="field-value-text" id="ocr-field-single-use">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Storage Conditions</span>
+                                            <span class="field-value-text" id="ocr-field-storage">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">CE Conformity Mark</span>
+                                            <span class="field-value-text" id="ocr-field-ce">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Prescription Status</span>
+                                            <span class="field-value-text" id="ocr-field-rx">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Instructions for Use (IFU)</span>
+                                            <span class="field-value-text" id="ocr-field-ifu">Not analyzed</span>
+                                        </div>
+                                        <div class="field-inspection-row">
+                                            <span class="field-label-text">Safety Warnings</span>
+                                            <span class="field-value-text" id="ocr-field-warnings">Not analyzed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 4: AI VISUAL INSPECTION
+                     ====================================================================== -->
+                <section id="view-visual" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Visual Inspection &amp; Symbol Detection</h1>
+                                <p class="card-subtitle-desc">ISO 15223-1 symbol detections returned by MedicalSymbolDetector.</p>
+                            </div>
+                            <div style="display: flex; gap: 0.5rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="setVisualMode('annotated')">Overlays</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="setVisualMode('raw')">Raw Image</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="zoomImage(1.2)">Zoom +</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="zoomImage(0.8)">Zoom -</button>
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="resetZoom()">Reset</button>
+                            </div>
+                        </div>
+
+                        <div id="visual-empty-state" style="background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); border-radius: var(--radius-sm); padding: 2rem; text-align: center;">
+                            <div style="font-weight: 700; color: var(--color-navy); font-size: 1rem; margin-bottom: 0.35rem;">No analysis yet</div>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Upload a label and click <strong>Analyze</strong>, or select a saved run to view detected ISO 15223-1 symbols.
+                            </p>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Go to Label Ingestion</button>
+                        </div>
+
+                        <div id="visual-results-body" class="split-inspection-grid" style="display: none;">
+                            <div class="viewport-panel" style="display: flex; align-items: center; justify-content: center; min-height: 260px;">
+                                <img id="visual-inspection-img" class="viewport-image" src="" alt="Visual Inspector" style="display: none;">
+                                <div id="visual-no-img-msg" style="color: var(--color-text-muted); font-size: 0.82rem;">Image preview unavailable</div>
+                            </div>
+
+                            <div class="data-panel-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Detected ISO 15223-1 Symbols</div>
+                                    <span class="badge badge-neutral" id="visual-symbols-detected-count">0 Detected Symbols</span>
+                                </div>
+
+                                <div id="visual-symbol-cards-container" style="display: flex; flex-direction: column; gap: 0.65rem; max-height: 480px; overflow-y: auto;">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 5: BARCODE & UDI ANALYSIS
+                     ====================================================================== -->
+                <section id="view-barcode" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Barcode &amp; GS1 UDI Carrier Analysis</h1>
+                                <p class="card-subtitle-desc">Decoded barcode strings, UDI Application Identifiers, Modulo-10 checksum result, and text cross-checks returned by backend.</p>
+                            </div>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="navigateTo('view-compliance')">Compliance Results &rarr;</button>
+                        </div>
+
+                        <div id="barcode-empty-state" style="background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); border-radius: var(--radius-sm); padding: 2rem; text-align: center;">
+                            <div style="font-weight: 700; color: var(--color-navy); font-size: 1rem; margin-bottom: 0.35rem;">No analysis yet</div>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Upload a label and click <strong>Analyze</strong>, or select a saved run from History to inspect barcode and UDI results.
+                            </p>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Go to Label Ingestion</button>
+                        </div>
+
+                        <div id="barcode-results-body" class="split-inspection-grid" style="display: none;">
+                            <div class="data-panel-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">UDI Carrier Payload</div>
+                                    <span class="badge badge-neutral" id="barcode-type-badge">Not detected</span>
+                                </div>
+
+                                <div style="background: var(--color-surface-sub); border: 1px solid var(--color-border); padding: 0.85rem; border-radius: var(--radius-sm);">
+                                    <div style="font-size: 0.72rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted); margin-bottom: 0.25rem;">
+                                        Scanned Raw Carrier String:
+                                    </div>
+                                    <div id="barcode-raw-payload" class="mono" style="font-size: 0.85rem; color: var(--color-navy); word-break: break-all;">Not detected</div>
+                                </div>
+
+                                <div class="field-inspection-row">
+                                    <span class="field-label-text">Device Identifier (DI &bull; AI 01)</span>
+                                    <span class="field-value-text mono" id="barcode-di-val">Not detected</span>
+                                </div>
+                                <div class="field-inspection-row">
+                                    <span class="field-label-text">GS1 Modulo-10 Checksum</span>
+                                    <span class="field-value-text" id="barcode-checksum-badge"><span class="badge badge-neutral">Not evaluated</span></span>
+                                </div>
+                                <div class="field-inspection-row">
+                                    <span class="field-label-text">Production Identifier: Lot (PI 10)</span>
+                                    <span class="field-value-text mono" id="barcode-pi-lot">Not detected</span>
+                                </div>
+                                <div class="field-inspection-row">
+                                    <span class="field-label-text">Production Identifier: Expiry (PI 17)</span>
+                                    <span class="field-value-text mono" id="barcode-pi-expiry">Not detected</span>
+                                </div>
+                                <div class="field-inspection-row">
+                                    <span class="field-label-text">All Scanned Barcodes</span>
+                                    <span class="field-value-text mono" id="barcode-scanned-list">Not detected</span>
+                                </div>
+                            </div>
+
+                            <div class="data-panel-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">UDI Cross-Reconciliation &amp; Errors</div>
+                                    <span class="badge badge-neutral">Backend Engine</span>
+                                </div>
+                                <div id="barcode-reconciliation-list" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                                    <div style="color: var(--color-text-muted); font-size: 0.82rem;">No reconciliation checks evaluated yet.</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 6: ADVANCED COMPLIANCE RESULTS
+                     ====================================================================== -->
+                <section id="view-compliance" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Compliance Findings &amp; Checklist</h1>
+                                <p class="card-subtitle-desc">Evaluated regulatory rule outcomes returned by the VeriLabel ComplianceEngine.</p>
+                            </div>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-review')">Proceed to Human Review &rarr;</button>
+                        </div>
+
+                        <div id="compliance-empty-state" style="background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); border-radius: var(--radius-sm); padding: 2rem; text-align: center;">
+                            <div style="font-weight: 700; color: var(--color-navy); font-size: 1rem; margin-bottom: 0.35rem;">No analysis yet</div>
+                            <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                                Upload a label on Label Ingestion and click <strong>Analyze</strong>, or select a saved validation record from History.
+                            </p>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="navigateTo('view-ingestion')">Go to Label Ingestion</button>
+                        </div>
+
+                        <div id="compliance-results-body" style="display: none;">
+                            <div id="compliance-verdict-ribbon" style="background: var(--color-surface-sub); border: 1px solid var(--color-border); border-radius: var(--radius-md); padding: 1.25rem 1.5rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                                <div>
+                                    <div style="display: flex; align-items: center; gap: 0.65rem; margin-bottom: 0.25rem;">
+                                        <span class="badge badge-neutral" id="compliance-ribbon-badge">--</span>
+                                        <strong id="compliance-ribbon-title" style="font-size: 1.15rem; color: var(--color-navy);">--</strong>
+                                    </div>
+                                    <div style="font-size: 0.82rem; color: var(--color-text-body);" id="compliance-ribbon-meta">
+                                        --
+                                    </div>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="font-family: var(--font-heading); font-size: 2.2rem; font-weight: 800; color: var(--color-navy);" id="compliance-ribbon-score">--</div>
+                                    <div style="font-size: 0.7rem; font-weight: 700; text-transform: uppercase; color: var(--color-text-muted);">Compliance Score</div>
+                                </div>
+                            </div>
+
+                            <div class="ledger-table-wrapper" style="margin-top: 0;">
+                                <div style="padding: 0.85rem 1.15rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center;">
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);" id="compliance-rules-heading">Evaluated Compliance Rules</div>
+                                    <div style="display: flex; gap: 0.35rem;">
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="filterRules('ALL')">All</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="filterRules('CRITICAL')">Critical</button>
+                                        <button type="button" class="btn btn-secondary btn-sm" onclick="filterRules('MAJOR')">Major</button>
+                                    </div>
+                                </div>
+                                <table class="ledger-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Rule ID</th>
+                                            <th>Regulatory Clause &amp; Requirement</th>
+                                            <th>Severity</th>
+                                            <th>Status</th>
+                                            <th>Observed Packaging Findings</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="compliance-rules-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 7: HUMAN REVIEW CENTER (21 CFR PART 11)
+                     ====================================================================== -->
+                <section id="view-review" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Human Review Center (21 CFR Part 11)</h1>
+                                <p class="card-subtitle-desc">Submit qualified human expert decisions to the SQLite audit ledger. Confirmation is requested before persisting changes.</p>
+                            </div>
+                        </div>
+
+                        <div class="split-inspection-grid">
+                            <!-- Left: Form -->
+                            <div class="data-panel-card" style="border-left: 4px solid var(--color-blue);">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Electronic Review &amp; Sign-Off</div>
+                                    <span class="badge badge-neutral" id="review-run-badge">No run selected</span>
+                                </div>
+
+                                <div id="review-no-run-alert" style="background: var(--color-surface-sub); border: 1px dashed var(--color-border-dark); border-radius: var(--radius-xs); padding: 0.75rem; font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 0.75rem;">
+                                    Select a pending run from the queue on the right (or analyze a new label) before submitting a review decision.
+                                </div>
+
+                                <form id="center-review-form" onsubmit="submitCenterHumanReview(event)">
+                                    <div class="form-group">
+                                        <label class="form-label">Reviewing Regulatory Officer</label>
+                                        <input type="text" id="center-review-officer" class="form-input" readonly value="" placeholder="Sign in to set reviewer identity">
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Official Regulatory Determination</label>
+                                        <select id="center-review-decision" class="form-select" required>
+                                            <option value="">-- Select decision --</option>
+                                            <option value="APPROVED">APPROVED &mdash; Commercial Release Clearance Granted</option>
+                                            <option value="CHANGES_REQUESTED">CHANGES_REQUESTED &mdash; Artwork Revision Required</option>
+                                            <option value="REJECTED">REJECTED &mdash; Critical Regulatory Non-Compliance Detected</option>
+                                        </select>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">Audit Justification Notes</label>
+                                        <textarea id="center-review-notes" class="form-textarea" rows="3" placeholder="Enter your regulatory review justification notes..." required></textarea>
+                                    </div>
+
+                                    <div style="margin-bottom: 1.25rem; display: flex; align-items: flex-start; gap: 0.5rem; background: var(--color-surface-sub); border: 1px solid var(--color-border); padding: 0.75rem; border-radius: var(--radius-sm);">
+                                        <input type="checkbox" id="center-review-sig" required style="margin-top: 0.2rem; accent-color: var(--color-blue); cursor: pointer;">
+                                        <label for="center-review-sig" style="font-size: 0.78rem; color: var(--color-text-body); cursor: pointer; line-height: 1.45;">
+                                            <strong>21 CFR Part 11 Electronic Signature Certification:</strong> I certify that this electronic review represents my binding regulatory decision.
+                                        </label>
+                                    </div>
+
+                                    <button type="submit" id="btn-center-submit-review" class="btn btn-primary btn-lg" style="width: 100%;" disabled>
+                                        <span>Submit Review Decision</span>
+                                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                    </button>
+                                </form>
+                            </div>
+
+                            <!-- Right: Queue & History -->
+                            <div class="data-panel-card">
+                                <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                                    <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy);">Pending Review Queue</div>
+                                    <span class="badge badge-neutral" id="center-pending-queue-badge">0 Pending</span>
+                                </div>
+
+                                <div id="center-pending-list" style="display: flex; flex-direction: column; gap: 0.65rem; margin-bottom: 1.5rem; max-height: 240px; overflow-y: auto;">
+                                    <div style="color: var(--color-text-muted); font-size: 0.82rem;">Loading queue from database...</div>
+                                </div>
+
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy); margin-bottom: 0.5rem;">Recorded Human Sign-Offs (Database)</div>
+                                <div id="center-history-list" style="display: flex; flex-direction: column; gap: 0.5rem; font-size: 0.8rem; max-height: 220px; overflow-y: auto;">
+                                    <div style="color: var(--color-text-muted); font-size: 0.82rem;">Loading sign-off history...</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 8: FULL AUDIT LEDGER PAGE
+                     ====================================================================== -->
+                <section id="view-ledger" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Audit Ledger</h1>
+                                <p class="card-subtitle-desc">Immutable historical transaction records of all packaging artwork audits, timestamps, and reviewer signatures.</p>
+                            </div>
+                            <div style="display: flex; gap: 0.75rem;">
+                                <button type="button" class="btn btn-secondary btn-sm" onclick="exportLedgerCsv()">Export CSV</button>
+                            </div>
+                        </div>
+
+                        <div class="ledger-table-wrapper" style="margin-top: 0;">
+                            <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--color-border); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;">
+                                <div style="display: flex; gap: 0.75rem; align-items: center;">
+                                    <input type="text" id="ledger-search-input-full" class="header-search-input" placeholder="Search by Run ID or Filename..." style="width: 260px;" oninput="filterLedgerTable()">
+                                    <select id="ledger-filter-verdict" class="form-select" style="width: 160px;" onchange="filterLedgerTable()">
+                                        <option value="ALL">All Verdicts</option>
+                                        <option value="COMPLIANT">COMPLIANT</option>
+                                        <option value="CONDITIONAL_PASS">CONDITIONAL</option>
+                                        <option value="NON_COMPLIANT">NON-COMPLIANT</option>
+                                    </select>
+                                    <select id="ledger-filter-review" class="form-select" style="width: 170px;" onchange="filterLedgerTable()">
+                                        <option value="ALL">All Review Statuses</option>
+                                        <option value="APPROVED">APPROVED</option>
+                                        <option value="REJECTED">REJECTED</option>
+                                        <option value="PENDING_REVIEW">PENDING REVIEW</option>
+                                    </select>
+                                </div>
+                                <div style="font-size: 0.8rem; color: var(--color-text-muted);" id="ledger-record-count">Showing records</div>
+                            </div>
+
+                            <table class="ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>Run ID</th>
+                                        <th>Artwork Document</th>
+                                        <th>Overall Verdict</th>
+                                        <th>Score</th>
+                                        <th>Review Status</th>
+                                        <th>Audit Timestamp</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="ledger-tbody-full">
+                                    <!-- Populated dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 9: CERTIFIED REPORTS
+                     ====================================================================== -->
+                <section id="view-reports" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Certified Compliance Reports & Dossiers</h1>
+                                <p class="card-subtitle-desc">Downloadable inspection dossiers formatted for FDA CDRH, EU MDR Notified Bodies, and internal QA audits.</p>
+                            </div>
+                        </div>
+
+                        <div class="ledger-table-wrapper" style="margin-top: 0;">
+                            <table class="ledger-table">
+                                <thead>
+                                    <tr>
+                                        <th>Run ID</th>
+                                        <th>Document Name</th>
+                                        <th>Verdict</th>
+                                        <th>Compliance Score</th>
+                                        <th>Review Status</th>
+                                        <th>Audit Date</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="reports-tbody">
+                                    <!-- Injected dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 10: ANALYSIS HISTORY
+                     ====================================================================== -->
+                <section id="view-history" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Analysis History Archive</h1>
+                                <p class="card-subtitle-desc">Chronological archive of all packaging verification runs with full audit parameters.</p>
+                            </div>
+                        </div>
+
+                        <div class="ledger-table-wrapper" style="margin-top: 0;">
+                            <table class="ledger-table history-table">
+                                <thead>
+                                    <tr>
+                                        <th>Run ID</th>
+                                        <th>Document</th>
+                                        <th>Verdict</th>
+                                        <th>Score</th>
+                                        <th>Critical Violations</th>
+                                        <th>Warnings</th>
+                                        <th>Review Status</th>
+                                        <th>Timestamp</th>
+                                        <th style="white-space: nowrap;">Open Cockpit</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="history-archive-tbody">
+                                    <!-- Injected dynamically via JS -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ======================================================================
+                     VIEW 11: SETTINGS
+                     ====================================================================== -->
+                <section id="view-settings" class="page-view">
+                    <div class="white-card">
+                        <div class="card-header-row">
+                            <div class="card-title-group">
+                                <h1 class="card-title-text">Platform & Terminal Settings</h1>
+                                <p class="card-subtitle-desc">Auditor profile, institutional manufacturing details, and 21 CFR Part 11 electronic records policy.</p>
+                            </div>
+                        </div>
+
+                        <div class="split-inspection-grid">
+                            <div class="data-panel-card">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy); margin-bottom: 0.5rem;">Auditor Profile (Saved Configuration)</div>
+                                <form id="settings-profile-form" onsubmit="saveAuditorSettings(event)">
+                                    <div class="form-group">
+                                        <label class="form-label">Full Legal Name</label>
+                                        <input type="text" id="settings-auditor-name" class="form-input" value="" placeholder="Not configured">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Institutional Email</label>
+                                        <input type="email" id="settings-auditor-email" class="form-input" value="" placeholder="Not configured">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Regulatory Title</label>
+                                        <input type="text" id="settings-auditor-role" class="form-input" value="" placeholder="Not configured">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Save Profile Changes</button>
+                                </form>
+                            </div>
+
+                            <div class="data-panel-card">
+                                <div style="font-weight: 700; font-size: 0.95rem; color: var(--color-navy); margin-bottom: 0.5rem;">Manufacturing Facility &amp; Governance</div>
+                                <form id="settings-org-form" onsubmit="saveAuditorSettings(event)">
+                                    <div class="form-group">
+                                        <label class="form-label">Organization Name</label>
+                                        <input type="text" id="settings-org-name" class="form-input" value="" placeholder="Not configured">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Manufacturing Facility Code</label>
+                                        <input type="text" id="settings-facility-id" class="form-input" value="" placeholder="Not configured">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Governing Regulatory Authority</label>
+                                        <input type="text" id="settings-jurisdiction" class="form-input" value="" placeholder="Not configured">
+                                    </div>
+                                    <button type="submit" class="btn btn-primary btn-sm">Save Organization Data</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Toast Notification Container -->
+    <div class="toast-container" id="toast-container"></div>
+
+    <!-- Modal for Detailed Run & Symbol Inspection -->
+    <div class="modal-overlay" id="detail-modal-overlay" onclick="closeDetailModal(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <span class="modal-title" id="modal-run-title">Audit Record Details</span>
+                <button type="button" class="modal-close-btn" onclick="closeDetailModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-run-body">
+                Loading audit parameters...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeDetailModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- READ-ONLY FIELD DETAIL MODAL (populated strictly from backend data) -->
+    <div id="field-inspector-modal" class="modal-overlay" style="display: none;" onclick="closeFieldModal()">
+        <div class="modal-container" style="max-width: 560px;" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <div>
+                    <h3 class="modal-title" id="modal-field-title">Field Inspection</h3>
+                    <div class="modal-subtitle" id="modal-field-reg">Standard</div>
+                </div>
+                <button type="button" class="modal-close-btn" onclick="closeFieldModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: var(--color-surface-sub); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem; margin-bottom: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.4rem;">
+                        <span style="font-size: 0.75rem; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">Backend Value:</span>
+                        <span class="badge badge-neutral" id="modal-field-status">NOT_ANALYZED</span>
+                    </div>
+                    <div class="mono" style="font-size: 1rem; font-weight: 700; color: var(--color-navy); word-break: break-word;" id="modal-field-val">Not analyzed</div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.85rem;">
+                    <div style="background: var(--color-bg); padding: 0.75rem; border-radius: var(--radius-xs); border: 1px solid var(--color-border);">
+                        <div style="font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Validation Run</div>
+                        <div style="font-size: 0.85rem; font-weight: 600; color: var(--color-navy); margin-top: 0.2rem;" id="modal-field-source">Not selected</div>
+                    </div>
+                    <div style="background: var(--color-bg); padding: 0.75rem; border-radius: var(--radius-xs); border: 1px solid var(--color-border);">
+                        <div style="font-size: 0.72rem; color: var(--color-text-muted); text-transform: uppercase; font-weight: 700;">Extractor Confidence</div>
+                        <div style="font-size: 0.85rem; font-weight: 700; color: var(--color-blue); margin-top: 0.2rem;" id="modal-field-conf">Not reported</div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" onclick="closeFieldModal()">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Script -->
+    <script src="/static/js/app.js"></script>
+</body>
+</html>

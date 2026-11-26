@@ -1,0 +1,21 @@
+# VeriLabel AI - Module 2: OCR and Document Processing
+# Python dependencies
+
+# Core Numerical & Image Processing
+numpy>=1.24.0
+opencv-python>=4.8.0
+pillow>=10.0.0
+
+# Data Validation & Modeling
+pydantic>=2.0.0
+python-dateutil>=2.8.2
+
+# Document & PDF Handling
+pypdfium2>=4.20.0
+
+# OCR Engines (Primary: PaddleOCR, with fallback support)
+# paddleocr>=2.7.0
+# paddlepaddle>=2.5.0
+
+# Testing & Utilities
+pytest>=7.0.0

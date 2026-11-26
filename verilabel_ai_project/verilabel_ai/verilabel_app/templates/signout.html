@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Signed out &mdash; VeriLabel AI</title>
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: #F9FAFB;
+            color: #111827;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-topbar {
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .auth-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #111827;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .auth-brand img {
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .auth-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 16px 48px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 360px;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 28px 26px;
+            box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
+        }
+
+        .auth-title {
+            margin: 0 0 4px 0;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-subtitle {
+            margin: 0 0 18px 0;
+            font-size: 0.85rem;
+            color: #6B7280;
+            line-height: 1.45;
+        }
+
+        .session-box {
+            border: 1px solid #E5E7EB;
+            border-radius: 6px;
+            padding: 12px 14px;
+            margin-bottom: 18px;
+            background: #F9FAFB;
+        }
+
+        .primary-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 40px;
+            background: #111827;
+            color: #FFFFFF;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.15s ease;
+        }
+
+        .primary-link-btn:hover {
+            background: #1F2937;
+        }
+
+        .secondary-link-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 40px;
+            margin-top: 10px;
+            background: #FFFFFF;
+            color: #374151;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: background-color 0.15s ease;
+        }
+
+        .secondary-link-btn:hover {
+            background: #F9FAFB;
+            color: #111827;
+        }
+
+        .auth-footer-row {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #F3F4F6;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+        .auth-footer-row a {
+            color: #111827;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+    </style>
+</head>
+<body>
+    <header class="auth-topbar">
+        <a href="/" class="auth-brand" aria-label="VeriLabel AI Home">
+            <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI">
+            <span>VeriLabel AI</span>
+        </a>
+    </header>
+
+    <main class="auth-center">
+        <section class="auth-card">
+            <h1 class="auth-title">Signed out</h1>
+            <p class="auth-subtitle">Your local session has been cleared.</p>
+
+            <div class="session-box">
+                <div style="font-size: 0.88rem; font-weight: 600; color: #111827;" id="signout-user-name">Auditor session closed</div>
+                <div style="font-size: 0.78rem; color: #6B7280; margin-top: 2px;" id="signout-user-meta">No active local session remaining</div>
+                <div style="font-size: 0.72rem; color: #9CA3AF; margin-top: 6px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace;" id="signout-time-badge">Local tokens cleared</div>
+            </div>
+
+            <a href="/login" class="primary-link-btn">Sign in again</a>
+            <a href="/" class="secondary-link-btn">Return to Home</a>
+
+            <div class="auth-footer-row">
+                New user? <a href="/register">Create an account</a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let lastUser = null;
+            try {
+                const lastRaw = sessionStorage.getItem("verilabel_last_signout");
+                if (lastRaw) {
+                    lastUser = JSON.parse(lastRaw);
+                } else {
+                    const currentRaw = localStorage.getItem("verilabel_user");
+                    if (currentRaw) {
+                        lastUser = JSON.parse(currentRaw);
+                        localStorage.removeItem("verilabel_user");
+                    }
+                }
+            } catch (e) {}
+
+            if (lastUser) {
+                const nameEl = document.getElementById("signout-user-name");
+                const metaEl = document.getElementById("signout-user-meta");
+                const timeEl = document.getElementById("signout-time-badge");
+                if (nameEl && lastUser.name) nameEl.textContent = lastUser.name;
+                if (metaEl) metaEl.textContent = `${lastUser.role || "Authorized Auditor"} • ${lastUser.organization || "Not provided"}`;
+                if (timeEl && lastUser.signedOutAt) {
+                    const d = new Date(lastUser.signedOutAt);
+                    timeEl.textContent = "Cleared " + d.toUTCString().replace("GMT", "UTC");
+                }
+            }
+        });
+    </script>
+</body>
+</html>

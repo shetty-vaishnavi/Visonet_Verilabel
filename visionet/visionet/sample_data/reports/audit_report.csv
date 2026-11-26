@@ -1,0 +1,16 @@
+Rule ID,Check Name,Category,Standard,Severity,Status,Observed Value,Message,Suggested Remediation
+MAND-001,Product Name Presence,MANDATORY_FIELDS,FDA 21 CFR 801.60 / EU MDR 23.2(a),CRITICAL,PASSED,CardioPulse Catheter System 6Fr,Product name successfully identified.,None
+MAND-002,Manufacturer Name Presence,MANDATORY_FIELDS,FDA 21 CFR 801.1 / EU MDR 23.2(b),CRITICAL,PASSED,Brahmastra MedTech Corp.,Manufacturer identification verified.,None
+MAND-003,Expiration Date Presence,MANDATORY_FIELDS,FDA 21 CFR 801 / EU MDR 23.2(i),CRITICAL,PASSED,2028-06-30,Expiration date '2028-06-30' identified.,None
+MAND-004,Batch / Lot Number Presence,MANDATORY_FIELDS,FDA 21 CFR 801 / EU MDR 23.2(g),CRITICAL,PASSED,BATCH-8842,Batch/Lot 'BATCH-8842' identified.,None
+MAND-005,Safety Warnings & Precautions,MANDATORY_FIELDS,FDA 21 CFR 801.109 / EU MDR 23.2(m),CRITICAL,PASSED,1 warning statements found,Safety warnings or precautionary indicators verified.,None
+MAND-006,Storage Conditions,MANDATORY_FIELDS,EU MDR 23.2(k) / ISO 15223-1,MAJOR,PASSED,Keep dry / protect from moisture,Storage instructions verified.,None
+DATE-001,Expiration Date Future Validity,DATE_INTEGRITY,ISO 15223-1 5.1.4 / FDA 21 CFR 801,CRITICAL,PASSED,2028-06-30,Expiration date is currently valid.,None
+DATE-002,Chronological Date Order,DATE_INTEGRITY,ISO 15223-1 / EU MDR,CRITICAL,PASSED,MFG: 2026-01-15 | EXP: 2028-06-30,Date sequence verified.,None
+UDI-001,UDI Carrier Presence,UDI_VALIDATION,FDA 21 CFR Part 830 / EU MDR Article 27,CRITICAL,PASSED,1 barcode(s) scanned,UDI barcode carrier successfully detected.,None
+UDI-002,UDI DI Checksum Validity,UDI_VALIDATION,GS1 General Specifications / FDA 21 CFR 830,CRITICAL,PASSED,DI: 00847239012349 (Checksum Valid),GS1 Modulo-10 checksum verified.,None
+UDI-003,UDI Lot Cross-Match,UDI_VALIDATION,FDA 21 CFR 830.20 / EU MDR 23.2(h),CRITICAL,PASSED,UDI LOT: BATCH-8842 vs Text LOT: BATCH-8842,Lot number consistency verified across barcode and text.,None
+UDI-004,UDI Expiry Date Cross-Match,UDI_VALIDATION,FDA 21 CFR 830.20 / EU MDR 23.2(h),CRITICAL,PASSED,UDI EXP: 2028-06-28 vs Text EXP: 2028-06-30,Expiration date consistency verified across barcode and text.,None
+SYM-001,Sterile Claim Symbol Verification,SYMBOL_VERIFICATION,ISO 15223-1 5.2.1 / EU MDR 23.2(l),MAJOR,PASSED,ISO Sterile symbol detected,Sterile symbol presence verified.,None
+SYM-002,Single-Use Symbol Verification,SYMBOL_VERIFICATION,ISO 15223-1 5.4.2 / EU MDR 23.2(n),MAJOR,PASSED,Do Not Re-use symbol detected,Single-use symbol verified.,None
+SYM-004,CE Conformity Mark,SYMBOL_VERIFICATION,EU MDR Article 20 / Regulation (EC) No 765/2008,MAJOR,PASSED,CE mark symbol detected,CE conformity emblem verified.,None

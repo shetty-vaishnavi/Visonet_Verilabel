@@ -1,0 +1,25 @@
+# VeriLabel AI - Module 3: Computer Vision & Barcode Module
+# Team: Brahmastra | GITAM University
+# Member 3 Dependencies
+
+# Core Computer Vision & Image Processing
+opencv-python>=4.8.0           # OpenCV for image processing, deskewing, template matching, barcode detection
+
+# Barcode Decoding Engines
+zxing-cpp>=2.0.0               # Native C++ high-accuracy decoder: DataMatrix, GS1-128, QR, Code-128, EAN, Code-39
+
+# Image Formats & PDF Support
+pillow>=10.0.0                 # PIL Image loading, format support
+pypdfium2>=4.0.0               # High-fidelity PDF-to-image rendering at 300 DPI
+
+# Data Validation & Schemas
+pydantic>=2.0.0                # Data model validation and serialization
+
+# Numerical Computing
+numpy>=1.24.0                  # NumPy array operations (image matrices, NMS, metric computation)
+
+# Testing Framework
+pytest>=7.4.0                  # Unit and integration test runner
+
+# Optional: ZBar C-library fallback decoder
+# pyzbar>=0.1.9                # Uncomment if ZBar is installed on host system (Linux/Mac)

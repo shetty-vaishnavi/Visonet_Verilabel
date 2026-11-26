@@ -1,0 +1,155 @@
+[
+  {
+    "rule_id": "MAND-001",
+    "category": "MANDATORY_FIELDS",
+    "standard": "FDA 21 CFR 801.60 / EU MDR 23.2(a)",
+    "name": "Product Name Presence",
+    "description": "Medical device label must clearly state the trade or proprietary product name.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Add the official approved proprietary or device trade name prominently on the label."
+  },
+  {
+    "rule_id": "MAND-002",
+    "category": "MANDATORY_FIELDS",
+    "standard": "FDA 21 CFR 801.1 / EU MDR 23.2(b)",
+    "name": "Manufacturer Name Presence",
+    "description": "Label must contain the legal manufacturer name and corporate identity.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Include the registered manufacturer corporate name preceded by 'Manufactured by' or the factory symbol."
+  },
+  {
+    "rule_id": "MAND-003",
+    "category": "MANDATORY_FIELDS",
+    "standard": "FDA 21 CFR 801 / EU MDR 23.2(i)",
+    "name": "Expiration Date Presence",
+    "description": "A clear use-by date / expiration date must be indicated for device stability and patient safety.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Provide a valid expiration date in ISO 8601 (YYYY-MM-DD or YYYY-MM) format next to the hourglass symbol."
+  },
+  {
+    "rule_id": "MAND-004",
+    "category": "MANDATORY_FIELDS",
+    "standard": "FDA 21 CFR 801 / EU MDR 23.2(g)",
+    "name": "Batch / Lot Number Presence",
+    "description": "Device must bear a batch code or lot number to ensure unit traceability and recall capability.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Include lot/batch designation adjacent to the ISO [LOT] symbol."
+  },
+  {
+    "rule_id": "MAND-005",
+    "category": "MANDATORY_FIELDS",
+    "standard": "FDA 21 CFR 801.109 / EU MDR 23.2(m)",
+    "name": "Safety Warnings & Precautions",
+    "description": "Label must bear essential safety warnings, contraindications, or cautionary statements.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Add required risk warnings, contraindications, or storage hazards."
+  },
+  {
+    "rule_id": "MAND-006",
+    "category": "MANDATORY_FIELDS",
+    "standard": "EU MDR 23.2(k) / ISO 15223-1",
+    "name": "Storage Conditions",
+    "description": "Any special storage or handling conditions (e.g. temperature limits, keep dry) must be stated.",
+    "severity": "MAJOR",
+    "remediation_hint": "State valid storage temperature ranges (e.g., 'Store between 2°C and 8°C')."
+  },
+  {
+    "rule_id": "DATE-001",
+    "category": "DATE_INTEGRITY",
+    "standard": "ISO 15223-1 5.1.4 / FDA 21 CFR 801",
+    "name": "Expiration Date Future Validity",
+    "description": "Medical device expiration date must be in the future at the time of label verification.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Ensure expiration date has not elapsed; expired product cannot be distributed."
+  },
+  {
+    "rule_id": "DATE-002",
+    "category": "DATE_INTEGRITY",
+    "standard": "ISO 15223-1 / EU MDR",
+    "name": "Chronological Date Order",
+    "description": "Expiration date must be chronologically after the manufacturing date.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Correct manufacturing or expiration date so that MFG precedes EXP."
+  },
+  {
+    "rule_id": "UDI-001",
+    "category": "UDI_VALIDATION",
+    "standard": "FDA 21 CFR Part 830 / EU MDR Article 27",
+    "name": "UDI Carrier Presence",
+    "description": "Medical device label must contain a machine-readable UDI barcode carrier (1D or 2D).",
+    "severity": "CRITICAL",
+    "remediation_hint": "Place a high-contrast GS1-128 or DataMatrix barcode containing DI and PI elements."
+  },
+  {
+    "rule_id": "UDI-002",
+    "category": "UDI_VALIDATION",
+    "standard": "GS1 General Specifications / FDA 21 CFR 830",
+    "name": "UDI DI Checksum Validity",
+    "description": "Device Identifier (GTIN) must strictly satisfy the GS1 Modulo-10 checksum algorithm.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Recalculate and re-encode the 14-digit GTIN with the correct Modulo-10 check digit."
+  },
+  {
+    "rule_id": "UDI-003",
+    "category": "UDI_VALIDATION",
+    "standard": "FDA 21 CFR 830.20 / EU MDR 23.2(h)",
+    "name": "UDI Lot Cross-Match",
+    "description": "The Lot Number encoded in the UDI barcode must match the human-readable text LOT on the label.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Synchronize UDI AI(10) with the printed [LOT] text."
+  },
+  {
+    "rule_id": "UDI-004",
+    "category": "UDI_VALIDATION",
+    "standard": "FDA 21 CFR 830.20 / EU MDR 23.2(h)",
+    "name": "UDI Expiry Date Cross-Match",
+    "description": "The Expiry Date encoded in the UDI barcode AI(17) must match printed human-readable EXP text.",
+    "severity": "CRITICAL",
+    "remediation_hint": "Synchronize UDI AI(17) YYMMDD date with the printed expiration date."
+  },
+  {
+    "rule_id": "SYM-001",
+    "category": "SYMBOL_VERIFICATION",
+    "standard": "ISO 15223-1 5.2.1 / EU MDR 23.2(l)",
+    "name": "Sterile Claim Symbol Verification",
+    "description": "Devices claiming sterility must display the official ISO 15223-1 STERILE symbol.",
+    "severity": "MAJOR",
+    "remediation_hint": "Include the ISO 15223-1 [STERILE] or sterilization method symbol on the label artwork."
+  },
+  {
+    "rule_id": "SYM-002",
+    "category": "SYMBOL_VERIFICATION",
+    "standard": "ISO 15223-1 5.4.2 / EU MDR 23.2(n)",
+    "name": "Single-Use Symbol Verification",
+    "description": "Single-use devices must display the ISO 15223-1 'Do Not Re-use' (2 in circle with slash) symbol.",
+    "severity": "MAJOR",
+    "remediation_hint": "Add the ISO 15223-1 5.4.2 'Do not re-use' symbol adjacent to instructions."
+  },
+  {
+    "rule_id": "SYM-003",
+    "category": "SYMBOL_VERIFICATION",
+    "standard": "ISO 15223-1 5.3.7",
+    "name": "Temperature Limit Symbol Verification",
+    "description": "Devices with temperature restrictions must accompany text with the ISO temperature thermometer symbol.",
+    "severity": "MAJOR",
+    "remediation_hint": "Add the ISO 15223-1 5.3.7 thermometer symbol next to temperature limit numbers."
+  },
+  {
+    "rule_id": "SYM-004",
+    "category": "SYMBOL_VERIFICATION",
+    "standard": "EU MDR Article 20 / Regulation (EC) No 765/2008",
+    "name": "CE Conformity Mark",
+    "description": "Devices marketed in the European Union must bear the CE mark with 4-digit Notified Body ID where required.",
+    "severity": "MAJOR",
+    "remediation_hint": "Include the CE logo along with the designated Notified Body 4-digit number."
+  },
+  {
+    "rule_id": "REG-001",
+    "category": "REGULATORY_STATEMENTS",
+    "standard": "FDA 21 CFR 801.109(b)",
+    "name": "Prescription Only Statement",
+    "description": "Prescription-only devices must state 'Rx Only' or statutory caution phrase.",
+    "severity": "MAJOR",
+    "remediation_hint": "Include 'Rx Only' or 'Caution: Federal law restricts this device to sale by or on the order of a physician'."
+  }
+]

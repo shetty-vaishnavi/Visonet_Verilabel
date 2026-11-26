@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple UI Workflow &bull; VeriLabel AI</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+    <style>
+        .flow-shell { min-height: 100vh; background: #F5F8FC; display: flex; flex-direction: column; color: var(--color-text-main); }
+        .flow-container { max-width: 1380px; margin: 0 auto; width: 100%; padding: 2rem 1.5rem 3.5rem; }
+        .flow-title { font-family: var(--font-heading); font-size: 1.75rem; font-weight: 800; color: #0F172A; margin-bottom: 0.35rem; }
+        .flow-subtitle { font-size: 0.9rem; color: var(--color-text-muted); max-width: 780px; margin-bottom: 1.5rem; }
+        .prototype-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.35rem; }
+        @media (max-width: 1120px) { .prototype-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+        @media (max-width: 740px) { .prototype-grid { grid-template-columns: 1fr; } }
+        .proto-step-wrap { display: flex; flex-direction: column; }
+        .proto-window { background: #FFFFFF; border: 1.5px solid #DCE5F2; border-radius: 14px; padding: 1rem 1.2rem 1.25rem; box-shadow: 0 4px 16px rgba(15,23,42,0.04); min-height: 265px; display: flex; flex-direction: column; }
+        .proto-chrome { display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.85rem; }
+        .proto-dots { display: flex; gap: 6px; }
+        .proto-dot { width: 9px; height: 9px; border-radius: 50%; }
+        .proto-dot.r { background: #EF4444; }
+        .proto-dot.y { background: #F59E0B; }
+        .proto-dot.g { background: #10B981; }
+        .proto-step-caption { text-align: center; font-size: 0.84rem; font-weight: 600; color: #475569; margin-top: 0.55rem; }
+        .simple-auth-brand { text-align: center; font-family: var(--font-heading); font-size: 1.15rem; font-weight: 800; color: #1D4ED8; margin-bottom: 0.75rem; }
+        .simple-input { width: 100%; background: #F1F5F9; border: 1px solid #E2E8F0; border-radius: 7px; padding: 0.5rem 0.7rem; font-size: 0.82rem; color: #0F172A; margin-bottom: 0.5rem; }
+        .simple-btn-blue { width: 100%; background: #2563EB; color: #FFFFFF; border: none; border-radius: 7px; padding: 0.55rem 1rem; font-size: 0.84rem; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; display: inline-flex; align-items: center; justify-content: center; }
+        .simple-btn-blue:disabled { opacity: 0.5; cursor: not-allowed; }
+        .simple-dropzone { flex: 1; border: 1.5px dashed #93C5FD; background: #F8FAFF; border-radius: 10px; display: flex; align-items: center; justify-content: center; padding: 1rem; text-align: center; color: #2563EB; font-size: 0.83rem; font-weight: 600; cursor: pointer; margin-bottom: 0.75rem; }
+        .simple-upload-bar { display: flex; gap: 0.5rem; align-items: center; }
+        .simple-file-pill { flex: 1; background: #F1F5F9; border: 1px solid #E2E8F0; border-radius: 7px; padding: 0.42rem 0.65rem; font-size: 0.75rem; font-family: var(--font-mono); color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        .proc-list { display: flex; flex-direction: column; gap: 0.65rem; margin: 0.25rem 0 auto; }
+        .proc-item { display: flex; align-items: center; gap: 0.65rem; font-size: 0.83rem; font-weight: 600; color: #1E293B; }
+        .proc-dot { width: 11px; height: 11px; border-radius: 50%; flex-shrink: 0; background: #CBD5E1; }
+        .proc-dot.done { background: #10B981; }
+        .proc-dot.running { background: #F59E0B; }
+        .proc-dot.error { background: #EF4444; }
+        .proc-bar-track { width: 100%; height: 8px; background: #E2E8F0; border-radius: 9999px; overflow: hidden; margin-top: 0.9rem; }
+        .proc-bar-fill { height: 100%; background: #2563EB; width: 0%; transition: width 0.25s ease; }
+        .mini-kpi-row { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.45rem; margin-bottom: 0.75rem; }
+        .mini-kpi { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 7px; padding: 0.4rem 0.5rem; }
+        .mini-kpi-label { font-size: 0.64rem; color: #64748B; font-weight: 600; }
+        .mini-kpi-val { font-size: 0.76rem; font-weight: 800; color: #0F172A; margin-top: 0.1rem; }
+        .mini-field-row { display: flex; justify-content: space-between; align-items: center; background: #F8FAFC; border: 1px solid #EDF2F7; border-radius: 5px; padding: 0.3rem 0.5rem; font-size: 0.74rem; font-weight: 600; color: #1E293B; margin-bottom: 0.3rem; }
+        .mini-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; background: #CBD5E1; }
+        .mini-dot.green { background: #10B981; }
+        .mini-dot.red { background: #EF4444; }
+        .mini-dot.amber { background: #F59E0B; }
+        .err-card { background: #F8FAFC; border: 1px solid #E2E8F0; border-left: 4px solid #EF4444; border-radius: 7px; padding: 0.5rem 0.7rem; font-size: 0.76rem; }
+    </style>
+</head>
+<body class="flow-shell">
+    <header class="app-header no-print">
+        <div class="header-left">
+            <a href="/" class="header-brand">
+                <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Emblem" class="header-brand-img">
+                <div>
+                    <div class="header-brand-title">VeriLabel AI</div>
+                    <div class="header-brand-subtitle">Simple Interactive Workflow</div>
+                </div>
+            </a>
+        </div>
+        <div class="header-right">
+            <a href="/login" class="btn btn-secondary btn-sm">Sign In</a>
+            <a href="/signout" class="btn btn-secondary btn-sm">Sign Out</a>
+            <a href="/required-fields" class="btn btn-secondary btn-sm">Required Fields</a>
+            <a href="/dashboard" class="btn btn-primary btn-sm">Audit Console</a>
+        </div>
+    </header>
+
+    <main class="flow-container">
+        <h1 class="flow-title">A Simple Interface for Label Validation</h1>
+        <p class="flow-subtitle">
+            All cards below connect strictly to the VeriLabel backend and SQLite database. No sample values or verdicts are pre-populated — select a file or saved validation and click <strong>Analyze</strong> to run.
+        </p>
+
+        <div class="prototype-grid">
+
+            <!-- 1. SIGN IN -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <a href="/login" style="font-size: 0.72rem; font-weight: 700; color: #2563EB;">Open Sign In &nearr;</a>
+                    </div>
+                    <div class="simple-auth-brand">VeriLabel AI</div>
+                    <input type="text" id="flow-login-username" class="simple-input" placeholder="Username">
+                    <input type="password" id="flow-login-password" class="simple-input" placeholder="Password">
+                    <div id="flow-login-msg" style="font-size: 0.72rem; min-height: 1rem; margin-bottom: 0.35rem; text-align: center; font-weight: 600;"></div>
+                    <button type="button" class="simple-btn-blue" onclick="runFlowSignIn()">Sign in</button>
+                    <div style="text-align: center; font-size: 0.72rem; margin-top: 0.45rem; color: #64748B;">
+                        New user? <a href="/register" style="color: #2563EB; font-weight: 600;">Create an account</a>
+                    </div>
+                </div>
+                <div class="proto-step-caption">1. Sign in (<a href="/login">/login</a>)</div>
+            </div>
+
+            <!-- 2. UPLOAD DOCUMENT & EXPLICIT ANALYZE -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <span style="font-size: 0.7rem; color: #64748B; font-weight: 600;">PDF / PNG / JPG</span>
+                    </div>
+                    <input type="file" id="flow-file-input" accept=".pdf,.png,.jpg,.jpeg,.bmp,.tiff" style="display: none;" onchange="handleFlowFileChange(event)">
+                    <div class="simple-dropzone" onclick="document.getElementById('flow-file-input').click()">
+                        Click to select label PDF or image
+                    </div>
+                    <div class="simple-upload-bar">
+                        <div class="simple-file-pill" id="flow-file-name">No file selected</div>
+                        <button type="button" id="flow-analyze-btn" class="simple-btn-blue" style="width: auto; padding: 0.45rem 1rem;" onclick="runFlowPipeline()" disabled>Analyze</button>
+                    </div>
+                </div>
+                <div class="proto-step-caption">2. Upload document</div>
+            </div>
+
+            <!-- 3. BACKEND PROCESSING STATUS -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <span id="flow-proc-status" style="font-size: 0.7rem; font-weight: 700; color: #64748B;">No analysis yet</span>
+                    </div>
+                    <div class="proc-list">
+                        <div class="proc-item"><span class="proc-dot" id="proc-dot-1"></span><span>Document ingestion</span></div>
+                        <div class="proc-item"><span class="proc-dot" id="proc-dot-2"></span><span>OCR extraction</span></div>
+                        <div class="proc-item"><span class="proc-dot" id="proc-dot-3"></span><span>Symbol &amp; barcode scan</span></div>
+                        <div class="proc-item"><span class="proc-dot" id="proc-dot-4"></span><span>Compliance validation</span></div>
+                    </div>
+                    <div class="proc-bar-track">
+                        <div class="proc-bar-fill" id="flow-proc-bar"></div>
+                    </div>
+                </div>
+                <div class="proto-step-caption">3. Backend processing</div>
+            </div>
+
+            <!-- 4. VALIDATION RESULTS SUMMARY (NO ANALYSIS YET UNTIL BACKEND RETURNS) -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <select id="flow-saved-run-select" class="form-select" style="font-size: 0.7rem; padding: 0.2rem 0.4rem; max-width: 170px;" onchange="loadFlowSavedRun(this.value)">
+                            <option value="">Load saved run...</option>
+                        </select>
+                    </div>
+                    <div class="mini-kpi-row">
+                        <div class="mini-kpi">
+                            <div class="mini-kpi-label">Rules checked</div>
+                            <div class="mini-kpi-val" id="flow-kpi-fields">--</div>
+                        </div>
+                        <div class="mini-kpi">
+                            <div class="mini-kpi-label">Failed rules</div>
+                            <div class="mini-kpi-val" id="flow-kpi-warns">--</div>
+                        </div>
+                        <div class="mini-kpi">
+                            <div class="mini-kpi-label">Verdict</div>
+                            <div class="mini-kpi-val" id="flow-kpi-verdict">Not analyzed</div>
+                        </div>
+                    </div>
+                    <div id="flow-fields-summary">
+                        <div class="mini-field-row"><span>Product</span><span id="flow-val-product" style="color: #64748B;">Not analyzed</span></div>
+                        <div class="mini-field-row"><span>Lot no.</span><span id="flow-val-lot" style="color: #64748B;">Not analyzed</span></div>
+                        <div class="mini-field-row"><span>Expiry</span><span id="flow-val-exp" style="color: #64748B;">Not analyzed</span></div>
+                        <div class="mini-field-row"><span>Symbols</span><span id="flow-val-sym" style="color: #64748B;">Not analyzed</span></div>
+                    </div>
+                </div>
+                <div class="proto-step-caption">4. Validation dashboard</div>
+            </div>
+
+            <!-- 5. FAILED RULE DETECTION -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <a href="/dashboard#compliance" style="font-size: 0.72rem; font-weight: 700; color: #2563EB;">Compliance View &nearr;</a>
+                    </div>
+                    <div id="flow-errors-stack" style="display: flex; flex-direction: column; gap: 0.45rem; flex: 1; justify-content: center; overflow-y: auto; max-height: 205px;">
+                        <div style="text-align: center; color: #64748B; font-size: 0.82rem;">No analysis yet</div>
+                    </div>
+                </div>
+                <div class="proto-step-caption">5. Discrepancy detection</div>
+            </div>
+
+            <!-- 6. VALIDATION REPORT -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <span style="font-size: 0.7rem; color: #64748B; font-weight: 600;">Database Report</span>
+                    </div>
+                    <div style="font-size: 0.96rem; font-weight: 800; color: #0F172A; margin-bottom: 0.5rem;">Validation Report</div>
+                    <div id="flow-report-summary" style="font-size: 0.8rem; color: #64748B; margin-bottom: auto;">
+                        No analysis yet. Run Analyze or choose a saved validation record to export.
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <a id="flow-export-json" href="#" class="simple-btn-blue" style="flex: 1; pointer-events: none; opacity: 0.5;">Export JSON</a>
+                        <a id="flow-export-pdf" href="#" target="_blank" class="btn btn-secondary btn-sm" style="pointer-events: none; opacity: 0.5;">Dossier</a>
+                    </div>
+                </div>
+                <div class="proto-step-caption">6. Validation report</div>
+            </div>
+
+            <!-- 7. SIGN OUT -->
+            <div class="proto-step-wrap">
+                <div class="proto-window">
+                    <div class="proto-chrome">
+                        <div class="proto-dots"><span class="proto-dot r"></span><span class="proto-dot y"></span><span class="proto-dot g"></span></div>
+                        <a href="/signout" style="font-size: 0.72rem; font-weight: 700; color: #DC5656;">Open Sign Out &nearr;</a>
+                    </div>
+                    <div class="simple-auth-brand">Session Control</div>
+                    <div id="flow-active-user" style="text-align: center; font-size: 0.8rem; font-weight: 600; color: #475569; margin-bottom: auto; padding-top: 0.5rem;">
+                        Checking session...
+                    </div>
+                    <button type="button" class="simple-btn-blue" style="background: #14243B;" onclick="runFlowSignOut()">Sign out</button>
+                </div>
+                <div class="proto-step-caption">7. Sign out (<a href="/signout">/signout</a>)</div>
+            </div>
+
+        </div>
+    </main>
+
+    <script>
+        let flowSelectedFile = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            refreshFlowSession();
+            loadFlowSavedRunsList();
+        });
+
+        function refreshFlowSession() {
+            const el = document.getElementById("flow-active-user");
+            try {
+                const raw = localStorage.getItem("verilabel_user");
+                if (raw) {
+                    const u = JSON.parse(raw);
+                    el.textContent = `Signed in as ${u.name} (${u.role})`;
+                    return;
+                }
+            } catch (e) {}
+            el.textContent = "Not signed in";
+        }
+
+        async function loadFlowSavedRunsList() {
+            try {
+                const res = await fetch("/api/runs?limit=50");
+                const data = await res.json();
+                const sel = document.getElementById("flow-saved-run-select");
+                if (sel && data.status === "success") {
+                    sel.innerHTML = `<option value="">Load saved run...</option>`;
+                    (data.items || []).forEach(r => {
+                        const o = document.createElement("option");
+                        o.value = r.validation_id;
+                        o.textContent = `#${r.validation_id} — ${r.file_name}`;
+                        sel.appendChild(o);
+                    });
+                }
+            } catch (e) {}
+        }
+
+        async function runFlowSignIn() {
+            const username = document.getElementById("flow-login-username").value.trim();
+            const password = document.getElementById("flow-login-password").value;
+            const msg = document.getElementById("flow-login-msg");
+            msg.style.color = "#2563EB";
+            msg.textContent = "Signing in...";
+            try {
+                const res = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+                if (res.ok && data.status === "success") {
+                    localStorage.setItem("verilabel_user", JSON.stringify(data.user));
+                    msg.style.color = "#159B70";
+                    msg.textContent = `Signed in: ${data.user.name}`;
+                    refreshFlowSession();
+                } else {
+                    msg.style.color = "#DC5656";
+                    msg.textContent = data.detail || "Authentication failed";
+                }
+            } catch (e) {
+                msg.style.color = "#DC5656";
+                msg.textContent = "Connection error";
+            }
+        }
+
+        function handleFlowFileChange(event) {
+            flowSelectedFile = event.target.files[0] || null;
+            document.getElementById("flow-file-name").textContent = flowSelectedFile ? flowSelectedFile.name : "No file selected";
+            document.getElementById("flow-analyze-btn").disabled = !flowSelectedFile;
+        }
+
+        async function runFlowPipeline() {
+            if (!flowSelectedFile) return;
+            const btn = document.getElementById("flow-analyze-btn");
+            const statusEl = document.getElementById("flow-proc-status");
+            const bar = document.getElementById("flow-proc-bar");
+
+            btn.disabled = true;
+            statusEl.style.color = "#2563EB";
+            statusEl.textContent = "Running backend...";
+            bar.style.width = "40%";
+            ["proc-dot-1", "proc-dot-2", "proc-dot-3", "proc-dot-4"].forEach(id => {
+                document.getElementById(id).className = "proc-dot running";
+            });
+
+            const fd = new FormData();
+            fd.append("file", flowSelectedFile);
+
+            try {
+                const res = await fetch("/api/verify", { method: "POST", body: fd });
+                const data = await res.json();
+                if (res.ok && data.status === "success") {
+                    bar.style.width = "100%";
+                    statusEl.style.color = "#159B70";
+                    statusEl.textContent = `Completed (${data.processing_time_ms} ms)`;
+                    ["proc-dot-1", "proc-dot-2", "proc-dot-3", "proc-dot-4"].forEach(id => {
+                        document.getElementById(id).className = "proc-dot done";
+                    });
+                    renderFlowResults(data);
+                    loadFlowSavedRunsList();
+                } else {
+                    bar.style.width = "0%";
+                    statusEl.style.color = "#DC5656";
+                    statusEl.textContent = "Failed";
+                    ["proc-dot-1", "proc-dot-2", "proc-dot-3", "proc-dot-4"].forEach(id => {
+                        document.getElementById(id).className = "proc-dot error";
+                    });
+                    alert("Pipeline failed: " + (data.detail || "Unknown error"));
+                }
+            } catch (e) {
+                statusEl.style.color = "#DC5656";
+                statusEl.textContent = "Error";
+            } finally {
+                btn.disabled = !flowSelectedFile;
+            }
+        }
+
+        async function loadFlowSavedRun(valId) {
+            if (!valId) return;
+            const res = await fetch(`/api/runs/${valId}`);
+            const data = await res.json();
+            if (res.ok && data.status === "success") {
+                document.getElementById("flow-proc-status").textContent = `Loaded Run #${valId}`;
+                document.getElementById("flow-proc-bar").style.width = "100%";
+                ["proc-dot-1", "proc-dot-2", "proc-dot-3", "proc-dot-4"].forEach(id => {
+                    document.getElementById(id).className = "proc-dot done";
+                });
+                renderFlowResults(data);
+            }
+        }
+
+        function renderFlowResults(data) {
+            const checks = data.checks || [];
+            const failed = checks.filter(c => !c.passed);
+            const f = data.fields || {};
+
+            document.getElementById("flow-kpi-fields").textContent = `${checks.length}`;
+            document.getElementById("flow-kpi-warns").textContent = `${failed.length}`;
+            document.getElementById("flow-kpi-verdict").textContent = data.verdict;
+
+            document.getElementById("flow-val-product").textContent = f.product_name || "Not detected";
+            document.getElementById("flow-val-lot").textContent = f.lot_number || "Not detected";
+            document.getElementById("flow-val-exp").textContent = f.expiry_date || "Not detected";
+            document.getElementById("flow-val-sym").textContent = `${(data.symbols || []).length} detected`;
+
+            const errStack = document.getElementById("flow-errors-stack");
+            errStack.innerHTML = "";
+            if (failed.length === 0) {
+                errStack.innerHTML = `<div style="text-align: center; color: #159B70; font-size: 0.82rem; font-weight: 600;">0 failed rules returned</div>`;
+            } else {
+                failed.forEach(c => {
+                    const div = document.createElement("div");
+                    div.className = "err-card";
+                    div.style.borderLeftColor = c.severity === "CRITICAL" ? "#EF4444" : "#F59E0B";
+                    div.innerHTML = `<div style="font-weight: 700; color: #0F172A;">${c.rule_id}: ${c.rule_name}</div><div style="color: #64748B;">${c.message}</div>`;
+                    errStack.appendChild(div);
+                });
+            }
+
+            document.getElementById("flow-report-summary").innerHTML = `
+                <strong>Run #${data.validation_id}</strong> &bull; ${data.file_name}<br>
+                Verdict: <strong>${data.verdict}</strong> (${data.compliance_score}%)
+            `;
+            const jBtn = document.getElementById("flow-export-json");
+            const pBtn = document.getElementById("flow-export-pdf");
+            jBtn.href = `/api/export/${data.validation_id}?format=json`;
+            jBtn.style.pointerEvents = "auto";
+            jBtn.style.opacity = "1";
+            pBtn.href = `/api/reports/${data.validation_id}/pdf`;
+            pBtn.style.pointerEvents = "auto";
+            pBtn.style.opacity = "1";
+        }
+
+        function runFlowSignOut() {
+            try {
+                const raw = localStorage.getItem("verilabel_user");
+                if (raw) {
+                    const u = JSON.parse(raw);
+                    u.signedOutAt = new Date().toISOString();
+                    sessionStorage.setItem("verilabel_last_signout", JSON.stringify(u));
+                }
+            } catch (e) {}
+            localStorage.removeItem("verilabel_user");
+            window.location.href = "/signout";
+        }
+    </script>
+</body>
+</html>

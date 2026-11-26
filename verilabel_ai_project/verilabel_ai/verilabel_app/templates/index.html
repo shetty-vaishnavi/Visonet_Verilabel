@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VeriLabel AI — Automated Medical Device Label Compliance</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+</head>
+<body>
+
+    <!-- Enterprise Telemetry Status Ribbon -->
+    <div class="telemetry-strip no-print">
+        <div class="telemetry-inner">
+            <div class="telemetry-group">
+                <div class="telemetry-item">
+                    <span class="dot-pulse"></span>
+                    <strong style="color: white;">System Status:</strong>
+                    <span>All Regulatory Engines Operational</span>
+                </div>
+                <div class="telemetry-item" style="color: var(--color-slate-400);">
+                    <span>Core Engine:</span>
+                    <strong style="color: white; font-family: var(--font-mono);">v2.4.1 (Production Baseline)</strong>
+                </div>
+            </div>
+            <div class="telemetry-group">
+                <div class="telemetry-item">
+                    <span>Standards Synchronized:</span>
+                    <strong style="color: #38BDF8;">FDA 21 CFR 801/830 &bull; EU MDR 2017/745 &bull; ISO 15223-1</strong>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Executive Navigation Header -->
+    <header class="navbar-verilabel no-print">
+        <div class="nav-container">
+            <a href="/" class="brand-wrapper">
+                <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Emblem" class="brand-logo-img">
+                <div class="brand-title-group">
+                    <span class="brand-title">VeriLabel <span class="ai-pill">Enterprise</span></span>
+                    <span class="brand-subtitle">Regulatory Intelligence Platform</span>
+                </div>
+            </a>
+            <ul class="nav-links">
+                <li><a href="/required-fields" class="nav-link" style="color: var(--color-blue); font-weight: 700;">Required Fields Blueprint</a></li>
+                <li><a href="/flow" class="nav-link" style="color: var(--color-teal); font-weight: 700;">Simple UI Flow</a></li>
+                <li><a href="#capabilities" class="nav-link">Capabilities</a></li>
+                <li><a href="#standards" class="nav-link">Regulatory Standards</a></li>
+                <li><a href="#workflow" class="nav-link">Governance & HITL</a></li>
+                <li><a href="#test-cases" class="nav-link">Test Cases</a></li>
+            </ul>
+            <div class="nav-actions">
+                <a href="/login" class="btn btn-secondary btn-sm">Auditor Sign In</a>
+                <a href="/signout" class="btn btn-secondary btn-sm">Sign Out</a>
+                <a href="/dashboard" class="btn btn-primary btn-sm">Launch Console</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Executive Hero Section -->
+    <section class="hero-section">
+        <div class="hero-grid">
+            <div>
+                <div class="hero-tag-pill">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    <span>21 CFR Part 11 Electronic Traceability Ready</span>
+                </div>
+                <h1 class="hero-heading">
+                    Label Smarter.<br>
+                    <span class="hero-accent">Comply Better.</span>
+                </h1>
+                <p class="hero-lead">
+                    An enterprise regulatory intelligence platform that automates packaging artwork verification, 
+                    ISO 15223-1 symbol audits, and GS1 UDI carrier decoding — mitigating packaging recall risk with qualified human expert oversight.
+                </p>
+                <div class="hero-cta-group">
+                    <a href="/dashboard" class="btn btn-blue btn-lg">
+                        <span>Launch Auditor Console</span>
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                    <a href="/required-fields" class="btn btn-secondary btn-lg" style="border-color: var(--color-blue); color: var(--color-blue);">
+                        <span>Explore Required Fields Blueprint</span>
+                    </a>
+                    <a href="#test-cases" class="btn btn-secondary btn-lg">Test Cases</a>
+                </div>
+                
+                <div class="standards-row">
+                    <span class="standards-label">Auditing Against Global Standards:</span>
+                    <div class="standards-badges">
+                        <span class="standard-chip">FDA 21 CFR §801 / §830</span>
+                        <span class="standard-chip">EU MDR 2017/745 Annex I</span>
+                        <span class="standard-chip">ISO 15223-1:2021</span>
+                        <span class="standard-chip">GS1 Healthcare UDI</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Live Database Telemetry Card -->
+            <div class="hero-dossier-card">
+                <div class="hero-dossier-header">
+                    <div style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span id="hero-db-status-badge" class="badge badge-pass" style="background: rgba(148, 163, 184, 0.18); color: #CBD5E1; border-color: rgba(148, 163, 184, 0.35);">
+                            SQLITE LEDGER &bull; CHECKING...
+                        </span>
+                        <span style="font-size: 0.8rem; font-weight: 600; color: var(--color-slate-300);">DATABASE SUMMARY</span>
+                    </div>
+                    <span id="hero-rules-count" style="font-size: 0.75rem; font-family: var(--font-mono); color: var(--color-slate-400);">Rules: --</span>
+                </div>
+                <div class="hero-dossier-body">
+                    <div class="mascot-hero-badge">
+                        <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Emblem" class="mascot-img-small">
+                        <div>
+                            <div style="font-weight: 700; color: var(--color-slate-900); font-size: 0.95rem;">VeriLabel Compliance Pipeline</div>
+                            <div style="font-size: 0.8rem; color: var(--color-slate-500);">Live metrics read directly from verilabel_audit.db</div>
+                        </div>
+                    </div>
+
+                    <div class="kpi-row" style="margin-bottom: 1.25rem;">
+                        <div class="kpi-box">
+                            <div id="hero-kpi-scans" class="kpi-value">0</div>
+                            <div class="kpi-label">Saved Audits</div>
+                        </div>
+                        <div class="kpi-box">
+                            <div id="hero-kpi-pass-rate" class="kpi-value">0.0%</div>
+                            <div class="kpi-label">Compliant Rate</div>
+                        </div>
+                        <div class="kpi-box">
+                            <div id="hero-kpi-pending" class="kpi-value">0</div>
+                            <div class="kpi-label">Pending Review</div>
+                        </div>
+                    </div>
+
+                    <div id="hero-summary-note" style="font-size: 0.78rem; color: var(--color-slate-600); line-height: 1.5; padding: 0.75rem; background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-sm);">
+                        <strong>No analysis yet:</strong> Automated validation runs only after you select or upload a label and click Analyze inside the console.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Regulatory Jurisdictions Bar -->
+    <div style="background: var(--color-white); border-bottom: 1px solid var(--color-slate-200); padding: 1.75rem 2rem;">
+        <div class="container-verilabel" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1.5rem;">
+            <span style="font-size: 0.75rem; font-weight: 800; text-transform: uppercase; color: var(--color-slate-400); letter-spacing: 0.08em;">
+                Calibrated For Global Health Authorities:
+            </span>
+            <div style="display: flex; gap: 2rem; align-items: center; font-weight: 700; font-size: 0.85rem; color: var(--color-slate-700);">
+                <span>🇺🇸 FDA CDRH (United States)</span>
+                <span>🇪🇺 EU MDR (European Union)</span>
+                <span>🇨🇦 Health Canada</span>
+                <span>🇯🇵 PMDA (Japan)</span>
+                <span>🇦🇺 TGA (Australia)</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Core Capabilities Grid -->
+    <section id="capabilities" class="section-pad">
+        <div class="container-verilabel">
+            <div class="section-head">
+                <div class="section-eyebrow">Enterprise Architecture</div>
+                <h2 class="section-title">Zero Tolerance for Labeling Non-Compliance</h2>
+                <p class="section-subtitle">
+                    Packaging artwork discrepancies represent the #1 preventable driver of medical device recalls. VeriLabel AI enforces algorithmic rigor while preserving human authority.
+                </p>
+            </div>
+
+            <div class="feature-grid">
+                <!-- Feature 1 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    </div>
+                    <h3 class="feature-title">Multi-Oriented Medical OCR</h3>
+                    <p class="feature-desc">
+                        PaddleOCR engine optimized for high-density pharmaceutical and medical device packaging, fine-print warnings, multiline manufacturer addresses, and multilingual declarations.
+                    </p>
+                </div>
+
+                <!-- Feature 2 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><path d="m4.93 4.93 4.24 4.24"></path><path d="m14.83 9.17 4.24-4.24"></path><path d="m14.83 14.83 4.24 4.24"></path><path d="m9.17 14.83-4.24 4.24"></path></svg>
+                    </div>
+                    <h3 class="feature-title">ISO 15223-1 Symbol Vision</h3>
+                    <p class="feature-desc">
+                        Multi-scale normalized cross-correlation detects 13 standardized medical glyphs (Sterile, Single Use, Temperature Limits, CE Mark, Notified Body ID, Manufacturer) with calibrated confidence gating.
+                    </p>
+                </div>
+
+                <!-- Feature 3 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="7" y2="16"></line><line x1="11" y1="8" x2="11" y2="16"></line><line x1="15" y1="8" x2="15" y2="16"></line></svg>
+                    </div>
+                    <h3 class="feature-title">GS1 UDI & Modulo-10 Validation</h3>
+                    <p class="feature-desc">
+                        Decodes 2D DataMatrix and 1D GS1-128 carriers. Verifies Device Identifier (DI) checksum integrity and cross-matches Production Identifiers (PI Lot, PI Expiration) against label text.
+                    </p>
+                </div>
+
+                <!-- Feature 4 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 12 2 2 4-4"></path><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                    </div>
+                    <h3 class="feature-title">17-Rule Compliance Engine</h3>
+                    <p class="feature-desc">
+                        Deterministic regulatory rule engine evaluates mandatory attributes, chronological date order (MFG vs EXP), sterility claims vs visual symbols, and Rx Only declarations with severity classifications.
+                    </p>
+                </div>
+
+                <!-- Feature 5 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                    </div>
+                    <h3 class="feature-title">Qualified Expert Sign-Off</h3>
+                    <p class="feature-desc">
+                        Structured Human-in-the-Loop approval workflow. Captures reviewer identity, institutional credentials, review justification, and electronic signature declaration.
+                    </p>
+                </div>
+
+                <!-- Feature 6 -->
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1-2.5-2.5Z"></path><path d="M6 6h10"></path><path d="M6 10h10"></path></svg>
+                    </div>
+                    <h3 class="feature-title">21 CFR Part 11 Audit Trail</h3>
+                    <p class="feature-desc">
+                        Immutable SQLite persistence logs upload cryptographic SHA-256 hashes, observed rule outcomes, and inspector electronic signatures in a permanent, auditable ledger.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Governance & Human-in-the-Loop Philosophy -->
+    <section id="workflow" class="section-pad" style="background: var(--color-white); border-top: 1px solid var(--color-slate-200); border-bottom: 1px solid var(--color-slate-200);">
+        <div class="container-verilabel">
+            <div class="section-head">
+                <div class="section-eyebrow">Regulatory Governance</div>
+                <h2 class="section-title">The Human-in-the-Loop Standard</h2>
+                <p class="section-subtitle">
+                    Under FDA Good Machine Learning Practice (GMLP) and EU AI Act principles, AI models are classified as decision-support systems. Final commercial release authorization remains exclusively with certified human experts.
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; text-align: center;">
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-md); padding: 1.75rem 1.25rem;">
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-slate-400); margin-bottom: 0.5rem; font-family: var(--font-mono);">01</div>
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem;">Artwork Ingestion</h4>
+                    <p style="font-size: 0.82rem; color: var(--color-slate-600); line-height: 1.5;">Ingests high-resolution PDF or raster artwork. CLAHE contrast preprocessing normalizes lighting and glare.</p>
+                </div>
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-md); padding: 1.75rem 1.25rem;">
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-slate-400); margin-bottom: 0.5rem; font-family: var(--font-mono);">02</div>
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem;">AI Extraction</h4>
+                    <p style="font-size: 0.82rem; color: var(--color-slate-600); line-height: 1.5;">OCR extracts textual attributes; vision algorithms detect ISO symbols; barcode decoders parse UDI carriers.</p>
+                </div>
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-md); padding: 1.75rem 1.25rem;">
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-slate-400); margin-bottom: 0.5rem; font-family: var(--font-mono);">03</div>
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem;">Rule Audit</h4>
+                    <p style="font-size: 0.82rem; color: var(--color-slate-600); line-height: 1.5;">Deterministic engine classifies discrepancies as Critical, Major, or Minor against FDA & EU MDR clauses.</p>
+                </div>
+                <div style="background: var(--color-primary-50); border: 1px solid var(--color-primary-200); border-radius: var(--radius-md); padding: 1.75rem 1.25rem;">
+                    <div style="font-size: 1.5rem; font-weight: 800; color: var(--color-primary-700); margin-bottom: 0.5rem; font-family: var(--font-mono);">04</div>
+                    <h4 style="margin-bottom: 0.5rem; font-size: 1.05rem; color: var(--color-primary-900);">Expert Sign-Off</h4>
+                    <p style="font-size: 0.82rem; color: var(--color-slate-700); line-height: 1.5;">Qualified regulatory officer inspects discrepancies and records electronic signature in the 21 CFR Part 11 audit ledger.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Repository Sample Labels (Read Dynamically from Disk) -->
+    <section id="test-cases" class="section-pad">
+        <div class="container-verilabel">
+            <div class="section-head">
+                <div class="section-eyebrow">Repository Input Files</div>
+                <h2 class="section-title">Available Label Files on Disk</h2>
+                <p class="section-subtitle">
+                    These files are read directly from the server's <code>sample_data/labels</code> folder via <code>GET /api/samples</code>. No verdicts or compliance scores are pre-assigned until you explicitly select a file and click <strong>Analyze</strong> inside the <a href="/dashboard" style="color: var(--color-primary-600); font-weight: 600;">Audit Console</a>, <a href="/required-fields" style="color: var(--color-primary-600); font-weight: 600;">Required Fields Inspector</a>, or <a href="/flow" style="color: var(--color-primary-600); font-weight: 600;">Workflow View</a>.
+                </p>
+            </div>
+
+            <div id="sample-repo-grid" class="sample-grid">
+                <div class="sample-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                    <div style="font-weight: 600; color: var(--color-slate-700); margin-bottom: 0.35rem;">Loading repository sample files...</div>
+                    <div style="font-size: 0.85rem; color: var(--color-slate-500);">Querying backend file inventory from <code>/api/samples</code>.</div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <script>
+        (function hydrateLandingFromBackend() {
+            function esc(str) {
+                if (str === null || str === undefined) return "";
+                return String(str)
+                    .replace(/&/g, "&amp;")
+                    .replace(/</g, "&lt;")
+                    .replace(/>/g, "&gt;")
+                    .replace(/"/g, "&quot;")
+                    .replace(/'/g, "&#39;");
+            }
+
+            async function loadStats() {
+                const badgeEl = document.getElementById("hero-db-status-badge");
+                const rulesEl = document.getElementById("hero-rules-count");
+                const scansEl = document.getElementById("hero-kpi-scans");
+                const rateEl = document.getElementById("hero-kpi-pass-rate");
+                const pendingEl = document.getElementById("hero-kpi-pending");
+                const noteEl = document.getElementById("hero-summary-note");
+
+                try {
+                    const res = await fetch("/api/stats");
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    const stats = await res.json();
+
+                    const total = Number(stats.total_scans ?? 0);
+                    const compliant = Number(stats.compliant_count ?? 0);
+                    const rate = Number(stats.pass_rate_percent ?? 0);
+                    const pending = Number(stats.pending_reviews ?? 0);
+                    const rulesCount = stats.total_rules_loaded ?? "Not provided";
+                    const standards = Array.isArray(stats.standards) && stats.standards.length
+                        ? stats.standards.join(", ")
+                        : "Not provided";
+
+                    if (scansEl) scansEl.textContent = String(total);
+                    if (rateEl) rateEl.textContent = total > 0 ? rate.toFixed(1) + "%" : "0.0%";
+                    if (pendingEl) pendingEl.textContent = String(pending);
+                    if (rulesEl) rulesEl.textContent = "Rules: " + rulesCount;
+
+                    if (badgeEl) {
+                        if (total === 0) {
+                            badgeEl.textContent = "SQLITE LEDGER • NO VALIDATIONS YET";
+                            badgeEl.style.background = "rgba(148, 163, 184, 0.18)";
+                            badgeEl.style.color = "#CBD5E1";
+                            badgeEl.style.borderColor = "rgba(148, 163, 184, 0.35)";
+                        } else {
+                            badgeEl.textContent = "SQLITE LEDGER • " + total + " SAVED RUN" + (total === 1 ? "" : "S");
+                            badgeEl.style.background = "rgba(37, 99, 235, 0.22)";
+                            badgeEl.style.color = "#93C5FD";
+                            badgeEl.style.borderColor = "rgba(96, 165, 250, 0.4)";
+                        }
+                    }
+
+                    if (noteEl) {
+                        if (total === 0) {
+                            noteEl.innerHTML = "<strong>No validations saved yet:</strong> SQLite currently holds 0 validation runs. Upload a label or pick a repository file in the console and click <strong>Analyze</strong>.";
+                        } else {
+                            noteEl.innerHTML = "<strong>Live SQLite Ledger:</strong> " + esc(compliant) + " compliant of " + esc(total) + " saved run(s); " + esc(pending) + " pending human review. Loaded rulebooks: " + esc(standards) + ".";
+                        }
+                    }
+                } catch (err) {
+                    if (badgeEl) badgeEl.textContent = "SQLITE LEDGER • UNAVAILABLE";
+                    if (noteEl) noteEl.textContent = "Failed to load database summary from /api/stats: " + err.message;
+                }
+            }
+
+            async function loadSamples() {
+                const grid = document.getElementById("sample-repo-grid");
+                if (!grid) return;
+
+                try {
+                    const res = await fetch("/api/samples");
+                    if (!res.ok) throw new Error("HTTP " + res.status);
+                    const data = await res.json();
+                    const samples = Array.isArray(data.samples) ? data.samples : [];
+
+                    if (samples.length === 0) {
+                        grid.innerHTML = `
+                            <div class="sample-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                                <div style="font-weight: 600; color: var(--color-slate-700); margin-bottom: 0.35rem;">No repository sample files found</div>
+                                <div style="font-size: 0.85rem; color: var(--color-slate-500);">Upload a custom PDF, PNG, or JPG label inside the Audit Console.</div>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    grid.innerHTML = samples.map(function (s) {
+                        const sidecarText = s.has_sidecar_text ? "OCR Sidecar (.txt)" : "Image Only (No .txt)";
+                        const badgeClass = s.has_sidecar_text ? "badge-pill" : "badge-warn";
+                        return `
+                            <div class="sample-card">
+                                <div>
+                                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.5rem; margin-bottom: 0.65rem;">
+                                        <strong style="font-size: 0.95rem; color: var(--color-slate-900);">${esc(s.id)}: ${esc(s.name)}</strong>
+                                        <span class="badge ${badgeClass}">${esc(sidecarText)}</span>
+                                    </div>
+                                    <div style="font-size: 0.78rem; font-weight: 600; font-family: var(--font-mono); color: var(--color-slate-500); margin-bottom: 0.5rem;">${esc(s.file || "Not provided")}</div>
+                                    <p style="font-size: 0.82rem; color: var(--color-slate-600); line-height: 1.5; margin-bottom: 1.25rem;">
+                                        ${esc(s.description || "Repository input image ready for explicit analysis.")} Verdict and metrics are computed only after you click Analyze.
+                                    </p>
+                                </div>
+                                <a href="/dashboard?sample=${encodeURIComponent(s.id)}" class="btn btn-secondary btn-sm" style="width: 100%;">Select in Console &rarr;</a>
+                            </div>
+                        `;
+                    }).join("");
+                } catch (err) {
+                    grid.innerHTML = `
+                        <div class="sample-card" style="grid-column: 1 / -1; text-align: center; padding: 2rem;">
+                            <div style="font-weight: 600; color: var(--color-slate-800); margin-bottom: 0.35rem;">Could not load repository samples</div>
+                            <div style="font-size: 0.85rem; color: var(--color-slate-500);">${esc(err.message)}</div>
+                        </div>
+                    `;
+                }
+            }
+
+            document.addEventListener("DOMContentLoaded", function () {
+                loadStats();
+                loadSamples();
+            });
+        })();
+    </script>
+
+    <!-- Academic Research & Engineering Team -->
+    <section id="team" class="section-pad" style="background: var(--color-white); border-top: 1px solid var(--color-slate-200);">
+        <div class="container-verilabel">
+            <div class="section-head" style="margin-bottom: 2.5rem;">
+                <div class="section-eyebrow">Academic Research & Engineering</div>
+                <h2 class="section-title">Team Brahmastra</h2>
+                <p class="section-subtitle">
+                    GITAM (Deemed to be University), Bengaluru &bull; Department of AI / Computer Science and Engineering
+                </p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 1rem; text-align: center;">
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-sm); padding: 1.25rem 0.75rem;">
+                    <div style="font-weight: 700; color: var(--color-slate-900); font-size: 0.92rem;">Member 1</div>
+                    <div style="font-size: 0.75rem; color: var(--color-primary-600); font-weight: 700; margin-bottom: 0.35rem; text-transform: uppercase;">Backend Lead</div>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">Pipeline Facade, DB Persistence, Rules Engine</p>
+                </div>
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-sm); padding: 1.25rem 0.75rem;">
+                    <div style="font-weight: 700; color: var(--color-slate-900); font-size: 0.92rem;">Member 2</div>
+                    <div style="font-size: 0.75rem; color: var(--color-primary-600); font-weight: 700; margin-bottom: 0.35rem; text-transform: uppercase;">OCR & Extraction</div>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">PaddleOCR, Text Preprocessing, Field Extraction</p>
+                </div>
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-sm); padding: 1.25rem 0.75rem;">
+                    <div style="font-weight: 700; color: var(--color-slate-900); font-size: 0.92rem;">Member 3</div>
+                    <div style="font-size: 0.75rem; color: var(--color-primary-600); font-weight: 700; margin-bottom: 0.35rem; text-transform: uppercase;">Vision & Barcodes</div>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">ISO Symbol Matching, UDI Modulo-10 Checksum</p>
+                </div>
+                <div style="background: var(--color-primary-50); border: 1px solid var(--color-primary-200); border-radius: var(--radius-sm); padding: 1.25rem 0.75rem;">
+                    <div style="font-weight: 700; color: var(--color-primary-900); font-size: 0.92rem;">Member 4</div>
+                    <div style="font-size: 0.75rem; color: var(--color-primary-700); font-weight: 800; margin-bottom: 0.35rem; text-transform: uppercase;">Frontend & UI</div>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-600);">Clinical Web Platform, Auth, Audit Cockpit</p>
+                </div>
+                <div style="background: var(--color-slate-50); border: 1px solid var(--color-slate-200); border-radius: var(--radius-sm); padding: 1.25rem 0.75rem;">
+                    <div style="font-weight: 700; color: var(--color-slate-900); font-size: 0.92rem;">Member 5</div>
+                    <div style="font-size: 0.75rem; color: var(--color-primary-600); font-weight: 700; margin-bottom: 0.35rem; text-transform: uppercase;">QA & Validation</div>
+                    <p style="font-size: 0.75rem; color: var(--color-slate-500);">Synthetic Data, Precision/Recall, Test Matrix</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer-verilabel no-print">
+        <div class="container-verilabel">
+            <div style="display: grid; grid-template-columns: 1.5fr 1fr 1fr 1fr; gap: 3rem; margin-bottom: 2.5rem;">
+                <div>
+                    <div style="display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1rem;">
+                        <img src="/static/img/verilabel_logo.jpg" alt="Logo" style="width: 36px; height: 36px; border-radius: var(--radius-xs);">
+                        <span style="color: white; font-weight: 800; font-size: 1.2rem;">VeriLabel AI</span>
+                    </div>
+                    <p style="font-size: 0.85rem; color: var(--color-slate-400); margin-bottom: 1rem; line-height: 1.6;">
+                        AI-Powered Medical Device Label Compliance Platform.<br>
+                        <em>Label Smarter. Comply Better.</em>
+                    </p>
+                    <span class="badge badge-pill">Enterprise Release v2.4.1</span>
+                </div>
+                <div>
+                    <h5 style="color: white; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Platform</h5>
+                    <ul style="list-style: none; font-size: 0.85rem;">
+                        <li style="margin-bottom: 0.5rem;"><a href="/" style="color: var(--color-slate-400);">Overview</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/login" style="color: var(--color-slate-400);">Auditor Sign In</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/register" style="color: var(--color-slate-400);">Terminal Registration</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="/dashboard" style="color: var(--color-slate-400);">Verification Console</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 style="color: white; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Regulations</h5>
+                    <ul style="list-style: none; font-size: 0.85rem;">
+                        <li style="margin-bottom: 0.5rem;"><a href="https://www.fda.gov/medical-devices/device-labeling" target="_blank" style="color: var(--color-slate-400);">FDA 21 CFR 801</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="https://www.fda.gov/medical-devices/unique-device-identification-system-udi-system" target="_blank" style="color: var(--color-slate-400);">FDA 21 CFR 830 (UDI)</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="https://health.ec.europa.eu/medical-devices-sector/new-regulations_en" target="_blank" style="color: var(--color-slate-400);">EU MDR 2017/745</a></li>
+                        <li style="margin-bottom: 0.5rem;"><a href="https://www.iso.org/standard/74404.html" target="_blank" style="color: var(--color-slate-400);">ISO 15223-1:2021</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 style="color: white; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 1rem;">Academic Notice</h5>
+                    <p style="font-size: 0.8rem; color: var(--color-slate-400); line-height: 1.5;">
+                        Developed for educational demonstration by Team Brahmastra, GITAM University, Bengaluru. Adheres to Good Machine Learning Practice (GMLP).
+                    </p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 VeriLabel AI &bull; Team Brahmastra &bull; GITAM University, Bengaluru. All rights reserved.</span>
+                <span>Protected under 21 CFR Part 11 Electronic Records & Signatures Standard.</span>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

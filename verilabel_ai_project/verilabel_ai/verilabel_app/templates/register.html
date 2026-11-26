@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register &mdash; VeriLabel AI</title>
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background-color: #F9FAFB;
+            color: #111827;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .auth-topbar {
+            padding: 20px 28px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .auth-brand {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            color: #111827;
+            font-size: 0.95rem;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+        }
+
+        .auth-brand img {
+            width: 24px;
+            height: 24px;
+            border-radius: 5px;
+            object-fit: cover;
+        }
+
+        .auth-back-link {
+            text-decoration: none;
+            font-size: 0.84rem;
+            color: #6B7280;
+            transition: color 0.15s ease;
+        }
+
+        .auth-back-link:hover {
+            color: #111827;
+        }
+
+        .auth-center {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 16px 16px 48px;
+        }
+
+        .auth-card {
+            width: 100%;
+            max-width: 380px;
+            background: #FFFFFF;
+            border: 1px solid #E5E7EB;
+            border-radius: 10px;
+            padding: 28px 26px;
+            box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
+        }
+
+        .auth-title {
+            margin: 0 0 4px 0;
+            font-size: 1.35rem;
+            font-weight: 600;
+            color: #111827;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-subtitle {
+            margin: 0 0 20px 0;
+            font-size: 0.85rem;
+            color: #6B7280;
+            line-height: 1.45;
+        }
+
+        .auth-alert {
+            display: none;
+            padding: 10px 12px;
+            border-radius: 6px;
+            font-size: 0.82rem;
+            line-height: 1.4;
+            margin-bottom: 16px;
+        }
+
+        .auth-alert.error {
+            display: block;
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #991B1B;
+        }
+
+        .auth-alert.success {
+            display: block;
+            background: #F0FDF4;
+            border: 1px solid #BBF7D0;
+            color: #166534;
+        }
+
+        .field-group {
+            margin-bottom: 14px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 0.8rem;
+            font-weight: 500;
+            color: #374151;
+            margin-bottom: 5px;
+        }
+
+        .input-wrap {
+            position: relative;
+        }
+
+        .field-input {
+            width: 100%;
+            height: 40px;
+            padding: 0 12px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            color: #111827;
+            background: #FFFFFF;
+            border: 1px solid #D1D5DB;
+            border-radius: 6px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .field-input::placeholder {
+            color: #9CA3AF;
+        }
+
+        .field-input:hover {
+            border-color: #9CA3AF;
+        }
+
+        .field-input:focus {
+            outline: none;
+            border-color: #111827;
+            box-shadow: 0 0 0 2px rgba(17, 24, 39, 0.08);
+        }
+
+        .pwd-toggle {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: transparent;
+            border: none;
+            font-family: inherit;
+            font-size: 0.78rem;
+            font-weight: 500;
+            color: #6B7280;
+            cursor: pointer;
+            padding: 4px 6px;
+            border-radius: 4px;
+        }
+
+        .pwd-toggle:hover {
+            color: #111827;
+            background: #F3F4F6;
+        }
+
+        .submit-btn {
+            width: 100%;
+            height: 40px;
+            margin-top: 6px;
+            background: #111827;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 6px;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.15s ease;
+        }
+
+        .submit-btn:hover:not(:disabled) {
+            background: #1F2937;
+        }
+
+        .submit-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .auth-footer-row {
+            margin-top: 20px;
+            padding-top: 16px;
+            border-top: 1px solid #F3F4F6;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #6B7280;
+        }
+
+        .auth-footer-row a {
+            color: #111827;
+            font-weight: 500;
+            text-decoration: underline;
+            text-underline-offset: 3px;
+        }
+
+        .auth-footer-row a:hover {
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <header class="auth-topbar">
+        <a href="/" class="auth-brand" aria-label="VeriLabel AI Home">
+            <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI">
+            <span>VeriLabel AI</span>
+        </a>
+        <a href="/" class="auth-back-link">Home</a>
+    </header>
+
+    <main class="auth-center">
+        <section class="auth-card" aria-labelledby="reg-heading">
+            <h1 class="auth-title" id="reg-heading">Create account</h1>
+            <p class="auth-subtitle">Register a new VeriLabel AI account.</p>
+
+            <div id="register-alert" class="auth-alert" role="alert"></div>
+
+            <form id="register-form">
+                <div class="field-group">
+                    <label for="reg-name" class="field-label">Username</label>
+                    <input type="text" id="reg-name" class="field-input" placeholder="Username" required autocomplete="username">
+                </div>
+
+                <div class="field-group">
+                    <label for="reg-email" class="field-label">Email</label>
+                    <input type="email" id="reg-email" class="field-input" placeholder="you@example.com" required autocomplete="email">
+                </div>
+
+                <div class="field-group">
+                    <label for="reg-password" class="field-label">Password</label>
+                    <div class="input-wrap">
+                        <input type="password" id="reg-password" class="field-input" placeholder="6+ characters" required minlength="6" autocomplete="new-password" style="padding-right: 54px;">
+                        <button type="button" class="pwd-toggle" id="btn-toggle-reg-pwd" onclick="toggleRegPassword()">Show</button>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label for="reg-confirm-password" class="field-label">Confirm password</label>
+                    <input type="password" id="reg-confirm-password" class="field-input" placeholder="Re-enter password" required minlength="6" autocomplete="new-password">
+                </div>
+
+                <button type="submit" id="btn-register-submit" class="submit-btn">Register</button>
+            </form>
+
+            <div class="auth-footer-row">
+                Already have an account? <a href="/login">Sign in</a>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        function toggleRegPassword() {
+            const pwd = document.getElementById('reg-password');
+            const btn = document.getElementById('btn-toggle-reg-pwd');
+            if (pwd.type === 'password') {
+                pwd.type = 'text';
+                btn.textContent = 'Hide';
+            } else {
+                pwd.type = 'password';
+                btn.textContent = 'Show';
+            }
+        }
+
+        function showRegAlert(type, message) {
+            const alertBox = document.getElementById('register-alert');
+            alertBox.className = 'auth-alert ' + type;
+            alertBox.textContent = message;
+        }
+
+        document.getElementById('register-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById('btn-register-submit');
+            const alertBox = document.getElementById('register-alert');
+
+            const name = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value;
+            const confirm = document.getElementById('reg-confirm-password').value;
+
+            if (password !== confirm) {
+                showRegAlert('error', 'Passwords do not match.');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Creating account...';
+            alertBox.className = 'auth-alert';
+
+            try {
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name, email, password })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === 'success') {
+                    localStorage.setItem('verilabel_user', JSON.stringify(data.user));
+                    showRegAlert('success', `Account created for ${data.user.name}. Redirecting...`);
+                    setTimeout(() => {
+                        window.location.href = '/dashboard';
+                    }, 300);
+                } else {
+                    showRegAlert('error', data.detail || 'Registration failed.');
+                    btn.disabled = false;
+                    btn.textContent = 'Register';
+                }
+            } catch (err) {
+                showRegAlert('error', 'Unable to connect to registration service.');
+                btn.disabled = false;
+                btn.textContent = 'Register';
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,92 @@
+﻿# VeriLabel AI — Git Ignore File
+# Team: Brahmastra | GITAM (Deemed to be University), Bengaluru
+
+# ===========================
+# Python
+# ===========================
+__pycache__/
+*.py[cod]
+*.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+share/python-wheels/
+*.whl
+pip-wheel-metadata/
+
+# ===========================
+# Virtual Environments
+# ===========================
+.venv/
+venv/
+env/
+ENV/
+.env
+
+# ===========================
+# Database files (SQLite)
+# ===========================
+*.db
+*.sqlite
+*.sqlite3
+
+# ===========================
+# Output / Generated files
+# ===========================
+ocr_output/
+test_ocr_output/
+cv_output/
+batch_results.json
+ocr_result.json
+
+# ===========================
+# Pytest / Testing Cache
+# ===========================
+.pytest_cache/
+.tox/
+.nox/
+.coverage
+.coverage.*
+htmlcov/
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+
+# ===========================
+# IDE / Editor Settings
+# ===========================
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# ===========================
+# Logs
+# ===========================
+*.log
+logs/
+
+# ===========================
+# Uploads (user-uploaded label files, transient)
+# ===========================
+uploads/
+
+# ===========================
+# OS-specific
+# ===========================
+desktop.ini

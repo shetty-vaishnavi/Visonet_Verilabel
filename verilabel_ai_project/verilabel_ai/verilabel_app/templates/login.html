@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ title or 'VeriLabel AI — Sign In' }}</title>
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            position: relative;
+            overflow-x: hidden;
+            background:
+                radial-gradient(rgba(37, 99, 235, 0.09) 1px, transparent 1px),
+                linear-gradient(135deg, #EEF6FF 0%, #FFFFFF 52%, #E8F2FF 100%);
+            background-size: 22px 22px, 100% 100%;
+            color: #0F172A;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Inter", Helvetica, Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .top-brand-bar {
+            position: relative;
+            z-index: 2;
+            width: 100%;
+            padding: 18px 28px 6px;
+            display: flex;
+            align-items: center;
+        }
+
+        .top-brand-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: #0F172A;
+            padding: 4px 10px 4px 4px;
+            border-radius: 12px;
+            transition: background-color 0.15s ease;
+        }
+
+        .top-brand-link:hover {
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .top-brand-img {
+            width: 34px;
+            height: 34px;
+            border-radius: 9px;
+            object-fit: cover;
+            border: 1px solid rgba(203, 213, 225, 0.85);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.12);
+            display: block;
+        }
+
+        .top-brand-name {
+            font-size: 1.04rem;
+            font-weight: 700;
+            letter-spacing: -0.02em;
+            color: #0F172A;
+        }
+
+        .top-brand-ai {
+            color: #2563EB;
+        }
+
+        .portal-stage {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 20px 32px;
+        }
+
+        /* Gentle Pastel Ambient Glow Orbs */
+        .bg-orb {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 0;
+            filter: blur(75px);
+        }
+
+        .bg-orb-1 {
+            width: 420px;
+            height: 420px;
+            top: -110px;
+            left: -90px;
+            background: rgba(125, 211, 252, 0.34);
+        }
+
+        .bg-orb-2 {
+            width: 440px;
+            height: 440px;
+            bottom: -120px;
+            right: -100px;
+            background: rgba(147, 197, 253, 0.34);
+        }
+
+        .portal-grid {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 920px;
+            display: grid;
+            grid-template-columns: 1.02fr 0.98fr;
+            gap: 32px;
+            align-items: stretch;
+        }
+
+        /* ==============================================================
+           LEFT COLUMN: MINIMAL INTERACTIVE GREETING MASCOT CARD
+           ============================================================== */
+        .mascot-card {
+            background: rgba(255, 255, 255, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 26px;
+            padding: 20px;
+            box-shadow: 0 20px 48px rgba(37, 99, 235, 0.08), 0 4px 16px rgba(15, 23, 42, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.95);
+            display: flex;
+            flex-direction: column;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .mascot-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 24px 54px rgba(37, 99, 235, 0.11), 0 6px 18px rgba(15, 23, 42, 0.05);
+        }
+
+        .mascot-stage {
+            flex: 1;
+            min-height: 432px;
+            border-radius: 16px;
+            position: relative;
+            overflow: hidden;
+            background: repeating-linear-gradient(
+                90deg,
+                #D8E7F8 0px,
+                #D8E7F8 14px,
+                #FFFFFF 14px,
+                #FFFFFF 28px
+            );
+        }
+
+        /* Center stripe column glow */
+        .mascot-stage::before {
+            content: "";
+            position: absolute;
+            top: 8%;
+            bottom: 0;
+            left: 24%;
+            right: 22%;
+            background: repeating-linear-gradient(
+                90deg,
+                rgba(147, 197, 253, 0.42) 0px,
+                rgba(147, 197, 253, 0.42) 11px,
+                rgba(255, 255, 255, 0.72) 11px,
+                rgba(255, 255, 255, 0.72) 22px
+            );
+            pointer-events: none;
+            z-index: 1;
+        }
+
+        /* Subtle Blue Corner Accents */
+        .corner-accent {
+            position: absolute;
+            width: 22px;
+            height: 22px;
+            border-color: #6E91BA;
+            border-style: solid;
+            opacity: 0.72;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .ca-tl { top: 16px; left: 16px; border-width: 2px 0 0 2px; border-top-left-radius: 4px; }
+        .ca-tr { top: 16px; right: 16px; border-width: 2px 2px 0 0; border-top-right-radius: 4px; }
+        .ca-bl { bottom: 16px; left: 16px; border-width: 0 0 2px 2px; border-bottom-left-radius: 4px; }
+        .ca-br { bottom: 16px; right: 16px; border-width: 0 2px 2px 0; border-bottom-right-radius: 4px; }
+
+        /* Soft Cyan Scan Line Sweep */
+        .cyan-scan-line {
+            position: absolute;
+            left: 0;
+            right: 0;
+            top: -16px;
+            height: 3px;
+            background: linear-gradient(90deg, transparent 4%, rgba(6, 182, 212, 0.92) 50%, transparent 96%);
+            box-shadow: 0 0 18px 4px rgba(34, 211, 238, 0.45), 0 -10px 24px rgba(6, 182, 212, 0.16);
+            opacity: 0;
+            z-index: 5;
+            pointer-events: none;
+        }
+
+        .cyan-scan-line.sweeping {
+            animation: scanSweep 1.35s cubic-bezier(0.35, 0, 0.25, 1) forwards;
+        }
+
+        @keyframes scanSweep {
+            0%   { top: 0%; opacity: 0; }
+            12%  { opacity: 0.95; }
+            85%  { opacity: 0.85; }
+            100% { top: 102%; opacity: 0; }
+        }
+
+        /* Floating Speech Bubble */
+        .speech-bubble {
+            position: absolute;
+            top: 18px;
+            left: 18px;
+            width: 238px;
+            background: #FFFFFF;
+            border-radius: 14px;
+            padding: 13px 15px;
+            box-shadow: 0 10px 26px rgba(15, 23, 42, 0.10);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            z-index: 6;
+        }
+
+        .voice-bars {
+            display: inline-flex;
+            align-items: flex-end;
+            gap: 3px;
+            height: 14px;
+            margin-bottom: 6px;
+        }
+
+        .voice-bar {
+            width: 3px;
+            height: 5px;
+            border-radius: 999px;
+            background: linear-gradient(180deg, #06B6D4 0%, #2563EB 100%);
+            animation: voiceIdle 1.6s ease-in-out infinite;
+        }
+
+        .voice-bar:nth-child(1) { animation-delay: 0s; }
+        .voice-bar:nth-child(2) { animation-delay: 0.18s; }
+        .voice-bar:nth-child(3) { animation-delay: 0.36s; }
+        .voice-bar:nth-child(4) { animation-delay: 0.54s; }
+
+        .speech-bubble.speaking .voice-bar {
+            animation: voiceTalk 0.45s ease-in-out infinite;
+        }
+
+        @keyframes voiceIdle {
+            0%, 100% { height: 4px; opacity: 0.55; }
+            50%      { height: 9px; opacity: 0.9; }
+        }
+
+        @keyframes voiceTalk {
+            0%, 100% { height: 4px; opacity: 0.75; }
+            50%      { height: 14px; opacity: 1; }
+        }
+
+        .speech-text {
+            margin: 0;
+            font-size: 0.83rem;
+            line-height: 1.45;
+            color: #1E293B;
+            font-weight: 500;
+            min-height: 2.5em;
+        }
+
+        /* Mascot Float + Wave Bounce Motion */
+        .mascot-float-wrap {
+            position: absolute;
+            bottom: 18px;
+            left: 52%;
+            transform: translateX(-50%);
+            height: 65%;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+            z-index: 3;
+            pointer-events: none;
+            animation: mascotFloat 4.2s ease-in-out infinite;
+        }
+
+        .mascot-avatar {
+            height: 100%;
+            width: auto;
+            max-width: 240px;
+            object-fit: contain;
+            transform-origin: bottom center;
+            filter: drop-shadow(0 10px 18px rgba(15, 23, 42, 0.10));
+        }
+
+        .mascot-avatar.wave-bounce {
+            animation: waveBounce 0.85s cubic-bezier(0.22, 1.35, 0.36, 1) forwards;
+        }
+
+        @keyframes mascotFloat {
+            0%, 100% { transform: translate(-50%, 0px); }
+            50%      { transform: translate(-50%, -7px); }
+        }
+
+        @keyframes waveBounce {
+            0%   { transform: scale(0.9) translateY(18px) rotate(-2deg); opacity: 0.75; }
+            40%  { transform: scale(1.04) translateY(-10px) rotate(3deg); opacity: 1; }
+            68%  { transform: scale(0.98) translateY(2px) rotate(-2deg); }
+            85%  { transform: scale(1.02) translateY(-3px) rotate(1deg); }
+            100% { transform: scale(1) translateY(0) rotate(0deg); }
+        }
+
+        /* ==============================================================
+           RIGHT COLUMN: CLEAN AUTHENTICATION CARD
+           ============================================================== */
+        .auth-card {
+            background: #FFFFFF;
+            border-radius: 26px;
+            padding: 34px 36px;
+            box-shadow: 0 20px 48px rgba(37, 99, 235, 0.08), 0 4px 16px rgba(15, 23, 42, 0.04);
+            border: 1px solid rgba(226, 232, 240, 0.85);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .portal-header {
+            display: flex;
+            align-items: center;
+            gap: 13px;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .portal-logo-wrap {
+            width: 46px;
+            height: 46px;
+            border-radius: 12px;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 1px solid #DBEAFE;
+            background: #FFFFFF;
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.14);
+        }
+
+        .portal-logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .platform-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0F172A;
+            letter-spacing: -0.02em;
+            line-height: 1.2;
+        }
+
+        .platform-sub {
+            font-size: 0.78rem;
+            color: #64748B;
+            margin-top: 2px;
+        }
+
+        .tab-switcher {
+            background: #F1F5F9;
+            border-radius: 12px;
+            padding: 4px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4px;
+            margin: 22px 0;
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            border-radius: 9px;
+            padding: 9px 12px;
+            font-family: inherit;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #475569;
+            cursor: pointer;
+            transition: background-color 0.16s ease, color 0.16s ease, box-shadow 0.16s ease;
+        }
+
+        .tab-btn.active {
+            background: #FFFFFF;
+            color: #0F172A;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.08);
+        }
+
+        .tab-btn:hover:not(.active) {
+            color: #0F172A;
+        }
+
+        .form-heading {
+            margin: 0 0 4px 0;
+            font-size: 1.22rem;
+            font-weight: 700;
+            color: #0F172A;
+            letter-spacing: -0.02em;
+        }
+
+        .form-caption {
+            margin: 0 0 18px 0;
+            font-size: 0.82rem;
+            color: #64748B;
+        }
+
+        .auth-alert {
+            display: none;
+            padding: 10px 12px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            line-height: 1.4;
+            margin-bottom: 14px;
+            font-weight: 500;
+        }
+
+        .auth-alert.error {
+            display: block;
+            background: #FEF2F2;
+            border: 1px solid #FECACA;
+            color: #B91C1C;
+        }
+
+        .auth-alert.success {
+            display: block;
+            background: #ECFDF5;
+            border: 1px solid #A7F3D0;
+            color: #047857;
+        }
+
+        .field-block {
+            margin-bottom: 15px;
+        }
+
+        .field-label {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #1E293B;
+            margin-bottom: 6px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 13px;
+            width: 16px;
+            height: 16px;
+            color: #94A3B8;
+            pointer-events: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .auth-input {
+            width: 100%;
+            height: 44px;
+            padding: 0 14px 0 38px;
+            font-family: inherit;
+            font-size: 0.86rem;
+            color: #0F172A;
+            background: #FFFFFF;
+            border: 1px solid #E2E8F0;
+            border-radius: 10px;
+            transition: border-color 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .auth-input::placeholder {
+            color: #94A3B8;
+        }
+
+        .auth-input:hover {
+            border-color: #CBD5E1;
+        }
+
+        .auth-input:focus {
+            outline: none;
+            border-color: #2563EB;
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.11);
+        }
+
+        .eye-btn {
+            position: absolute;
+            right: 10px;
+            background: transparent;
+            border: none;
+            color: #64748B;
+            cursor: pointer;
+            padding: 5px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+        }
+
+        .eye-btn:hover {
+            color: #0F172A;
+            background: #F1F5F9;
+        }
+
+        .submit-gradient-btn {
+            width: 100%;
+            height: 44px;
+            margin-top: 6px;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #06B6D4 0%, #2563EB 100%);
+            color: #FFFFFF;
+            font-family: inherit;
+            font-size: 0.9rem;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 6px 18px rgba(37, 99, 235, 0.25);
+            transition: transform 0.14s ease, box-shadow 0.14s ease, filter 0.14s ease;
+        }
+
+        .submit-gradient-btn:hover:not(:disabled) {
+            filter: brightness(1.04);
+            transform: translateY(-1px);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.30);
+        }
+
+        .submit-gradient-btn:disabled {
+            opacity: 0.65;
+            cursor: not-allowed;
+        }
+
+        .hidden-panel {
+            display: none;
+        }
+
+        @media (max-width: 860px) {
+            .portal-grid {
+                grid-template-columns: 1fr;
+                max-width: 430px;
+                gap: 20px;
+            }
+            .mascot-stage {
+                min-height: 300px;
+            }
+            .auth-card {
+                padding: 28px 22px;
+            }
+        }
+    </style>
+</head>
+<body data-initial-tab="{{ initial_tab or 'signin' }}">
+
+    <div class="bg-orb bg-orb-1" aria-hidden="true"></div>
+    <div class="bg-orb bg-orb-2" aria-hidden="true"></div>
+
+    <!-- Top-Left Page Logo Header -->
+    <header class="top-brand-bar">
+        <a href="/" class="top-brand-link" aria-label="VeriLabel AI Home">
+            <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Logo" class="top-brand-img">
+            <span class="top-brand-name">VeriLabel <span class="top-brand-ai">AI</span></span>
+        </a>
+    </header>
+
+    <main class="portal-stage">
+        <div class="portal-grid">
+            <!-- Left Interactive Greeting Mascot Card (Completely Minimal) -->
+            <section class="mascot-card" id="mascot-card" aria-label="Interactive Greeting Mascot" onclick="handleMascotClick()">
+                <div class="mascot-stage">
+                    <span class="corner-accent ca-tl"></span>
+                    <span class="corner-accent ca-tr"></span>
+                    <span class="corner-accent ca-bl"></span>
+                    <span class="corner-accent ca-br"></span>
+
+                    <div class="cyan-scan-line" id="cyan-scan-line"></div>
+
+                    <div class="speech-bubble" id="speech-bubble">
+                        <div class="voice-bars" aria-hidden="true">
+                            <span class="voice-bar"></span>
+                            <span class="voice-bar"></span>
+                            <span class="voice-bar"></span>
+                            <span class="voice-bar"></span>
+                        </div>
+                        <p class="speech-text" id="vera-speech-text"></p>
+                    </div>
+
+                    <div class="mascot-float-wrap">
+                        <img src="/static/img/vera_assistant.png" alt="VeriLabel AI Mascot" class="mascot-avatar" id="mascot-avatar">
+                    </div>
+                </div>
+            </section>
+
+            <!-- Right Clean Auth Card -->
+            <section class="auth-card" aria-label="Authentication Portal">
+                <div class="portal-header">
+                    <div class="portal-logo-wrap">
+                        <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Logo" class="portal-logo-img">
+                    </div>
+                    <div>
+                        <div class="platform-title">VeriLabel AI</div>
+                        <div class="platform-sub">Medical Device Label Compliance Workspace</div>
+                    </div>
+                </div>
+
+            <div class="tab-switcher" role="tablist" aria-label="Account Mode">
+                <button type="button" role="tab" id="tab-signin" class="tab-btn active" aria-selected="true" onclick="switchAuthTab('signin', true)">Sign In</button>
+                <button type="button" role="tab" id="tab-register" class="tab-btn" aria-selected="false" onclick="switchAuthTab('register', true)">Create Account</button>
+            </div>
+
+            <div id="auth-alert" class="auth-alert" role="alert"></div>
+
+            <!-- Sign In Tab (Username + Password only) -->
+            <div id="panel-signin">
+                <h1 class="form-heading">Sign in</h1>
+                <p class="form-caption">Enter your username and password to continue.</p>
+
+                <form id="login-form">
+                    <div class="field-block">
+                        <label for="login-username" class="field-label">Username</label>
+                        <div class="input-wrap">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="login-username"
+                                class="auth-input"
+                                placeholder="Enter username"
+                                required
+                                autocomplete="username"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="field-block" style="margin-bottom: 18px;">
+                        <label for="login-password" class="field-label">Password</label>
+                        <div class="input-wrap">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <input
+                                type="password"
+                                id="login-password"
+                                class="auth-input"
+                                placeholder="Enter password"
+                                required
+                                autocomplete="current-password"
+                                style="padding-right: 40px;"
+                            >
+                            <button type="button" class="eye-btn" id="btn-toggle-pwd" onclick="toggleEye('login-password', 'eye-login')" aria-label="Show or hide password">
+                                <svg id="eye-login" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-login-submit" class="submit-gradient-btn">
+                        <span>Sign In</span>
+                        <span aria-hidden="true">&rarr;</span>
+                    </button>
+                </form>
+            </div>
+
+            <!-- Create Account Tab (Username >= 3 chars + Password >= 6 chars only) -->
+            <div id="panel-register" class="hidden-panel">
+                <h1 class="form-heading">Create account</h1>
+                <p class="form-caption">Choose a username and password to register.</p>
+
+                <form id="register-form">
+                    <div class="field-block">
+                        <label for="reg-username" class="field-label">Username</label>
+                        <div class="input-wrap">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                    <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                            </span>
+                            <input
+                                type="text"
+                                id="reg-username"
+                                class="auth-input"
+                                placeholder="Minimum 3 characters"
+                                required
+                                minlength="3"
+                                autocomplete="username"
+                            >
+                        </div>
+                    </div>
+
+                    <div class="field-block" style="margin-bottom: 18px;">
+                        <label for="reg-password" class="field-label">Password</label>
+                        <div class="input-wrap">
+                            <span class="input-icon" aria-hidden="true">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+                                </svg>
+                            </span>
+                            <input
+                                type="password"
+                                id="reg-password"
+                                class="auth-input"
+                                placeholder="Minimum 6 characters"
+                                required
+                                minlength="6"
+                                autocomplete="new-password"
+                                style="padding-right: 40px;"
+                            >
+                            <button type="button" class="eye-btn" id="btn-toggle-reg-pwd" onclick="toggleEye('reg-password', 'eye-reg')" aria-label="Show or hide password">
+                                <svg id="eye-reg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </button>
+                        </div>
+                    </div>
+
+                    <button type="submit" id="btn-register-submit" class="submit-gradient-btn">
+                        <span>Create Account</span>
+                        <span aria-hidden="true">&rarr;</span>
+                    </button>
+                </form>
+            </div>
+        </section>
+        </div>
+    </main>
+
+    <script>
+        let typingTimer = null;
+        let currentTabMode = "signin";
+        let mascotClickIndex = 0;
+
+        const clickMessages = [
+            "Hi! 👋 Ready when you are! Enter your details on the right.",
+            "Need a new login? Switch to Create Account anytime!",
+            "Everything stays protected inside your VeriLabel workspace."
+        ];
+
+        function clearAlert() {
+            const box = document.getElementById("auth-alert");
+            box.className = "auth-alert";
+            box.textContent = "";
+        }
+
+        function showAlert(type, message) {
+            const box = document.getElementById("auth-alert");
+            box.className = "auth-alert " + type;
+            box.textContent = message;
+        }
+
+        function triggerScanLine() {
+            const line = document.getElementById("cyan-scan-line");
+            if (!line) return;
+            line.classList.remove("sweeping");
+            void line.offsetWidth;
+            line.classList.add("sweeping");
+        }
+
+        function triggerWaveBounce() {
+            const img = document.getElementById("mascot-avatar");
+            if (!img) return;
+            img.classList.remove("wave-bounce");
+            void img.offsetWidth;
+            img.classList.add("wave-bounce");
+        }
+
+        function speakGreetingText(text, speakAudio) {
+            const bubble = document.getElementById("speech-bubble");
+            const target = document.getElementById("vera-speech-text");
+            if (!target) return;
+
+            if (typingTimer) {
+                clearInterval(typingTimer);
+                typingTimer = null;
+            }
+
+            if (bubble) bubble.classList.add("speaking");
+            const chars = Array.from(text);
+            let idx = 0;
+            target.textContent = "";
+
+            typingTimer = setInterval(function () {
+                if (idx < chars.length) {
+                    target.textContent += chars[idx];
+                    idx += 1;
+                } else {
+                    clearInterval(typingTimer);
+                    typingTimer = null;
+                    if (bubble) bubble.classList.remove("speaking");
+                }
+            }, 22);
+
+            if (speakAudio && "speechSynthesis" in window) {
+                try {
+                    window.speechSynthesis.cancel();
+                    const spoken = text.replace(/[\u{1F300}-\u{1FAFF}]/gu, "").trim();
+                    const utter = new SpeechSynthesisUtterance(spoken);
+                    utter.rate = 1.02;
+                    utter.pitch = 1.08;
+                    utter.volume = 0.75;
+                    window.speechSynthesis.speak(utter);
+                } catch (e) {}
+            }
+        }
+
+        function handleMascotClick() {
+            triggerScanLine();
+            triggerWaveBounce();
+            const msg = clickMessages[mascotClickIndex % clickMessages.length];
+            mascotClickIndex += 1;
+            speakGreetingText(msg, true);
+        }
+
+        function switchAuthTab(mode, shouldAnnounce) {
+            currentTabMode = mode === "register" ? "register" : "signin";
+            const isRegister = currentTabMode === "register";
+            const tabSignIn = document.getElementById("tab-signin");
+            const tabRegister = document.getElementById("tab-register");
+            const panelSignIn = document.getElementById("panel-signin");
+            const panelRegister = document.getElementById("panel-register");
+
+            clearAlert();
+
+            tabSignIn.classList.toggle("active", !isRegister);
+            tabRegister.classList.toggle("active", isRegister);
+            tabSignIn.setAttribute("aria-selected", String(!isRegister));
+            tabRegister.setAttribute("aria-selected", String(isRegister));
+
+            panelSignIn.classList.toggle("hidden-panel", isRegister);
+            panelRegister.classList.toggle("hidden-panel", !isRegister);
+
+            document.title = isRegister ? "VeriLabel AI — Create Account" : "VeriLabel AI — Sign In";
+
+            if (shouldAnnounce) {
+                triggerWaveBounce();
+                const greeting = isRegister
+                    ? "Create a username (3+ chars) and password (6+ chars) to join!"
+                    : "Hi! 👋 I'm Vera, your VeriLabel AI bot! Sign in to begin.";
+                speakGreetingText(greeting, false);
+            }
+        }
+
+        function toggleEye(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            const reveal = input.type === "password";
+            input.type = reveal ? "text" : "password";
+            if (icon) {
+                icon.innerHTML = reveal
+                    ? '<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"></path><line x1="1" y1="1" x2="23" y2="23"></line>'
+                    : '<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path><circle cx="12" cy="12" r="3"></circle>';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            try {
+                localStorage.removeItem("verilabel_user");
+                sessionStorage.removeItem("verilabel_last_signout");
+            } catch (e) {}
+
+            const initial = document.body.getAttribute("data-initial-tab") || "signin";
+            switchAuthTab(initial, false);
+
+            triggerScanLine();
+            triggerWaveBounce();
+            const initialGreeting = initial === "register"
+                ? "Hi! 👋 Welcome! Pick a username and password to create your account."
+                : "Hi! 👋 Welcome to VeriLabel AI! Sign in to begin.";
+            speakGreetingText(initialGreeting, true);
+
+            // Bind field focus mascot messages
+            const loginUser = document.getElementById("login-username");
+            const loginPass = document.getElementById("login-password");
+            const regUser = document.getElementById("reg-username");
+            const regPass = document.getElementById("reg-password");
+
+            if (loginUser) {
+                loginUser.addEventListener("focus", function () {
+                    speakGreetingText("Enter your VeriLabel username to unlock your workspace.", false);
+                });
+            }
+            if (loginPass) {
+                loginPass.addEventListener("focus", function () {
+                    speakGreetingText("Now enter your password. Use the eye button if you want to check it.", false);
+                });
+            }
+            if (regUser) {
+                regUser.addEventListener("focus", function () {
+                    speakGreetingText("Choose a unique username with at least 3 characters.", false);
+                });
+            }
+            if (regPass) {
+                regPass.addEventListener("focus", function () {
+                    speakGreetingText("Set a password with at least 6 characters.", false);
+                });
+            }
+        });
+
+        document.getElementById("login-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById("btn-login-submit");
+            const username = document.getElementById("login-username").value.trim();
+            const password = document.getElementById("login-password").value;
+
+            btn.disabled = true;
+            btn.textContent = "Signing in...";
+            clearAlert();
+
+            try {
+                const res = await fetch("/api/auth/login", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === "success") {
+                    localStorage.setItem("verilabel_user", JSON.stringify(data.user));
+                    showAlert("success", `Signed in as ${data.user.name}. Redirecting...`);
+                    speakGreetingText(`Welcome back, ${data.user.name}! Opening dashboard...`, false);
+                    setTimeout(() => {
+                        window.location.replace("/dashboard");
+                    }, 300);
+                } else {
+                    showAlert("error", data.detail || "Invalid username or password.");
+                    speakGreetingText("Hmm, those credentials didn't match. Please try again.", false);
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Sign In</span><span aria-hidden="true">&rarr;</span>';
+                }
+            } catch (err) {
+                showAlert("error", "Unable to connect to authentication service.");
+                btn.disabled = false;
+                btn.innerHTML = '<span>Sign In</span><span aria-hidden="true">&rarr;</span>';
+            }
+        });
+
+        document.getElementById("register-form").addEventListener("submit", async function (e) {
+            e.preventDefault();
+            const btn = document.getElementById("btn-register-submit");
+            const username = document.getElementById("reg-username").value.trim();
+            const password = document.getElementById("reg-password").value;
+
+            if (username.length < 3) {
+                showAlert("error", "Username must be at least 3 characters.");
+                return;
+            }
+            if (password.length < 6) {
+                showAlert("error", "Password must be at least 6 characters.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Creating account...";
+            clearAlert();
+
+            try {
+                const res = await fetch("/api/auth/register", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ username, password })
+                });
+                const data = await res.json();
+
+                if (res.ok && data.status === "success") {
+                    localStorage.setItem("verilabel_user", JSON.stringify(data.user));
+                    showAlert("success", `Account created for ${data.user.name}. Redirecting...`);
+                    speakGreetingText(`All set, ${data.user.name}! Taking you to the dashboard...`, false);
+                    setTimeout(() => {
+                        window.location.replace("/dashboard");
+                    }, 300);
+                } else {
+                    showAlert("error", data.detail || "Account creation failed.");
+                    btn.disabled = false;
+                    btn.innerHTML = '<span>Create Account</span><span aria-hidden="true">&rarr;</span>';
+                }
+            } catch (err) {
+                showAlert("error", "Unable to connect to registration service.");
+                btn.disabled = false;
+                btn.innerHTML = '<span>Create Account</span><span aria-hidden="true">&rarr;</span>';
+            }
+        });
+    </script>
+</body>
+</html>

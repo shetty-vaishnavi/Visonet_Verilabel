@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mandatory Packaging Fields &bull; VeriLabel AI</title>
+    <link rel="stylesheet" href="/static/css/app.css">
+    <link rel="icon" type="image/jpeg" href="/static/img/verilabel_logo.jpg">
+</head>
+<body style="background: var(--color-bg); min-height: 100vh; display: flex; flex-direction: column;">
+
+    <header class="app-header no-print" style="position: sticky; top: 0; z-index: 100;">
+        <div class="header-left">
+            <a href="/" class="header-brand">
+                <img src="/static/img/verilabel_logo.jpg" alt="VeriLabel AI Emblem" class="header-brand-img">
+                <div>
+                    <div class="header-brand-title">VeriLabel AI</div>
+                    <div class="header-brand-subtitle">Mandatory Packaging Fields Inspector</div>
+                </div>
+            </a>
+            <span class="header-version-pill" id="rf-status-pill">No analysis yet</span>
+        </div>
+
+        <div class="header-right">
+            <a href="/flow" class="btn btn-secondary btn-sm">Simple UI Flow</a>
+            <a href="/dashboard" class="btn btn-secondary btn-sm">Audit Console</a>
+            <a href="/login" class="btn btn-primary btn-sm" id="rf-auth-link">Sign In</a>
+        </div>
+    </header>
+
+    <main style="max-width: 1440px; width: 100%; margin: 0 auto; padding: 1.5rem; flex: 1;">
+        <!-- Control Bar: Select Saved Validation OR Upload & Click Analyze -->
+        <div class="white-card" style="margin-bottom: 1.5rem;">
+            <div class="card-header-row" style="margin-bottom: 1rem;">
+                <div class="card-title-group">
+                    <h1 class="card-title-text">Mandatory Regulatory Packaging Fields</h1>
+                    <p class="card-subtitle-desc">
+                        Connected strictly to the VeriLabel backend pipeline and SQLite audit database. Select a saved validation record or upload a label and click <strong>Analyze</strong>.
+                    </p>
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; align-items: end;">
+                <!-- Option 1: Load Saved Validation from SQLite -->
+                <div style="background: var(--color-surface-sub); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem;">
+                    <label for="rf-saved-run-select" class="form-label" style="margin-bottom: 0.4rem;">Option 1: Select Saved Validation Record (SQLite)</label>
+                    <select id="rf-saved-run-select" class="form-select" onchange="loadSavedRunFields(this.value)">
+                        <option value="">-- No record selected --</option>
+                    </select>
+                </div>
+
+                <!-- Option 2: Upload New Label & Click Analyze -->
+                <div style="background: var(--color-surface-sub); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 1rem;">
+                    <label class="form-label" style="margin-bottom: 0.4rem;">Option 2: Upload New Label &amp; Run Analysis</label>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <input type="file" id="rf-file-input" accept=".pdf,.png,.jpg,.jpeg,.bmp,.tiff" class="form-input" style="padding: 0.35rem 0.5rem; font-size: 0.82rem;" onchange="onRfFileSelected(event)">
+                        <select id="rf-product-select" class="form-select" style="max-width: 180px; font-size: 0.8rem;">
+                            <option value="">No Baseline</option>
+                        </select>
+                        <button type="button" id="rf-analyze-btn" class="btn btn-primary btn-sm" onclick="analyzeRfUploadedFile()" disabled style="white-space: nowrap;">
+                            Analyze
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Empty State (shown until user runs Analyze or selects a saved validation) -->
+        <div id="rf-empty-state" class="white-card" style="text-align: center; padding: 3rem 1.5rem; border: 1px dashed var(--color-border-dark);">
+            <h2 style="color: var(--color-navy); font-size: 1.2rem; margin-bottom: 0.4rem;">No analysis yet</h2>
+            <p style="color: var(--color-text-muted); font-size: 0.9rem; max-width: 580px; margin: 0 auto;">
+                No label has been analyzed and no saved validation has been chosen. Choose a saved validation record from the dropdown above, or upload a packaging image/PDF and click <strong>Analyze</strong>.
+            </p>
+        </div>
+
+        <!-- Real Analysis Output Panel (hidden until backend responds) -->
+        <div id="rf-results-panel" style="display: none;">
+            <div style="display: grid; grid-template-columns: 42% 58%; gap: 1.5rem; align-items: start;">
+                <!-- Left: Document Image & Real Metrics -->
+                <div class="white-card" style="position: sticky; top: 82px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.75rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.6rem;">
+                        <strong style="color: var(--color-navy);" id="rf-doc-title">Document Preview</strong>
+                        <span class="badge badge-neutral" id="rf-verdict-badge">--</span>
+                    </div>
+
+                    <div class="viewport-panel" style="min-height: 260px; display: flex; align-items: center; justify-content: center; margin-bottom: 1rem;">
+                        <img id="rf-preview-img" class="viewport-image" src="" alt="Analyzed Label" style="display: none;">
+                        <div id="rf-no-img" style="font-size: 0.82rem; color: var(--color-text-muted); padding: 1.5rem;">Image preview not available for this saved record.</div>
+                    </div>
+
+                    <div id="rf-ocr-warning" style="display: none; background: var(--color-warning-soft); border: 1px solid var(--color-warning-bd); border-radius: var(--radius-sm); padding: 0.75rem; font-size: 0.8rem; margin-bottom: 0.75rem;"></div>
+
+                    <div style="font-size: 0.82rem; color: var(--color-text-body); display: flex; flex-direction: column; gap: 0.35rem;" id="rf-summary-meta"></div>
+
+                    <div style="margin-top: 1rem; display: flex; gap: 0.5rem;">
+                        <a id="rf-btn-pdf" href="#" target="_blank" class="btn btn-primary btn-sm" style="flex: 1;">Printable Report</a>
+                        <a id="rf-btn-json" href="#" class="btn btn-secondary btn-sm">Export JSON</a>
+                    </div>
+                </div>
+
+                <!-- Right: Real Extracted Fields, Symbols & UDI -->
+                <div class="white-card">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; border-bottom: 1px solid var(--color-border); padding-bottom: 0.75rem;">
+                        <div>
+                            <h2 style="font-size: 1.05rem; font-weight: 700; color: var(--color-navy); margin: 0;">Backend Field Extraction Results</h2>
+                            <span style="font-size: 0.78rem; color: var(--color-text-muted);" id="rf-fields-subtitle">Showing values returned by backend</span>
+                        </div>
+                        <span class="badge badge-info" id="rf-detected-count">0 Detected</span>
+                    </div>
+
+                    <div id="rf-fields-list" style="display: flex; flex-direction: column; gap: 0.65rem;"></div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--color-navy); margin-bottom: 0.65rem;">Detected ISO 15223-1 Symbols</h3>
+                        <div id="rf-symbols-list" style="display: flex; flex-wrap: wrap; gap: 0.5rem;"></div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid var(--color-border);">
+                        <h3 style="font-size: 0.95rem; font-weight: 700; color: var(--color-navy); margin-bottom: 0.65rem;">Evaluated Compliance Rules</h3>
+                        <div id="rf-checks-list" style="display: flex; flex-direction: column; gap: 0.5rem;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div class="toast-container" id="toast-container"></div>
+
+    <script>
+        let rfSelectedFile = null;
+
+        document.addEventListener("DOMContentLoaded", function () {
+            loadRfDropdowns();
+            try {
+                const u = localStorage.getItem("verilabel_user");
+                if (u) {
+                    const user = JSON.parse(u);
+                    const link = document.getElementById("rf-auth-link");
+                    if (link && user?.name) {
+                        link.textContent = user.name;
+                        link.href = "/dashboard";
+                    }
+                }
+            } catch (e) {}
+        });
+
+        async function loadRfDropdowns() {
+            try {
+                const [runsRes, prodRes] = await Promise.all([
+                    fetch("/api/runs?limit=100"),
+                    fetch("/api/products")
+                ]);
+                const runsData = await runsRes.json();
+                const prodData = await prodRes.json();
+
+                const runSel = document.getElementById("rf-saved-run-select");
+                if (runSel) {
+                    if (runsRes.status === 401) {
+                        runSel.innerHTML = `<option value="">-- Sign in to load saved runs --</option>`;
+                    } else if (runsRes.ok && runsData.status === "success") {
+                        runSel.innerHTML = `<option value="">-- No record selected --</option>`;
+                        (runsData.items || []).forEach(r => {
+                            const opt = document.createElement("option");
+                            opt.value = r.validation_id;
+                            opt.textContent = `#${r.validation_id} — ${r.file_name} (${r.verdict}, ${r.compliance_score}%)`;
+                            runSel.appendChild(opt);
+                        });
+                    }
+                }
+
+                const prodSel = document.getElementById("rf-product-select");
+                if (prodSel && prodData.status === "success") {
+                    prodSel.innerHTML = `<option value="">No Baseline</option>`;
+                    (prodData.products || []).forEach(p => {
+                        const opt = document.createElement("option");
+                        opt.value = p.product_code;
+                        opt.textContent = p.product_code;
+                        prodSel.appendChild(opt);
+                    });
+                }
+            } catch (e) {
+                console.warn("Failed loading dropdowns:", e);
+            }
+        }
+
+        function onRfFileSelected(event) {
+            rfSelectedFile = event.target.files[0] || null;
+            document.getElementById("rf-analyze-btn").disabled = !rfSelectedFile;
+        }
+
+        async function analyzeRfUploadedFile() {
+            if (!rfSelectedFile) return;
+            const btn = document.getElementById("rf-analyze-btn");
+            btn.disabled = true;
+            btn.textContent = "Analyzing...";
+
+            const formData = new FormData();
+            formData.append("file", rfSelectedFile);
+            const pcode = document.getElementById("rf-product-select")?.value;
+            if (pcode) formData.append("product_code", pcode);
+
+            try {
+                const res = await fetch("/api/verify", { method: "POST", body: formData });
+                const data = await res.json();
+                if (res.ok && data.status === "success") {
+                    await renderFullFieldAudit(data.validation_id, data);
+                    await loadRfDropdowns();
+                    document.getElementById("rf-saved-run-select").value = String(data.validation_id);
+                } else {
+                    alert("Analysis failed: " + (data.detail || "Backend error"));
+                }
+            } catch (err) {
+                alert("Error contacting backend: " + err.message);
+            } finally {
+                btn.textContent = "Analyze";
+                btn.disabled = !rfSelectedFile;
+            }
+        }
+
+        async function loadSavedRunFields(valId) {
+            if (!valId) {
+                document.getElementById("rf-empty-state").style.display = "block";
+                document.getElementById("rf-results-panel").style.display = "none";
+                document.getElementById("rf-status-pill").textContent = "No analysis yet";
+                return;
+            }
+            const res = await fetch(`/api/runs/${valId}`);
+            const data = await res.json();
+            if (res.ok && data.status === "success") {
+                await renderFullFieldAudit(valId, data);
+            }
+        }
+
+        function esc(str) {
+            if (str === null || str === undefined) return "";
+            return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        async function renderFullFieldAudit(valId, runData) {
+            const rfRes = await fetch(`/api/required-fields?validation_id=${valId}`);
+            const rfJson = await rfRes.json();
+
+            document.getElementById("rf-empty-state").style.display = "none";
+            document.getElementById("rf-results-panel").style.display = "block";
+            document.getElementById("rf-status-pill").textContent = `Run #${valId}`;
+            document.getElementById("rf-doc-title").textContent = runData.file_name || `Run #${valId}`;
+
+            const vBadge = document.getElementById("rf-verdict-badge");
+            vBadge.textContent = `${runData.verdict} (${runData.compliance_score}%)`;
+            vBadge.className = `badge ${runData.verdict === "COMPLIANT" ? "badge-compliant" : (runData.verdict === "CONDITIONAL_PASS" ? "badge-warning" : "badge-non-compliant")}`;
+
+            const imgEl = document.getElementById("rf-preview-img");
+            const noImg = document.getElementById("rf-no-img");
+            if (runData.annotated_image || runData.raw_image) {
+                imgEl.src = runData.annotated_image || runData.raw_image;
+                imgEl.style.display = "block";
+                noImg.style.display = "none";
+            } else {
+                imgEl.style.display = "none";
+                noImg.style.display = "block";
+            }
+
+            const rawOcr = runData.raw_ocr;
+            const rawText = rawOcr ? rawOcr.raw_text : (runData.fields?.raw_text || "");
+            const warnEl = document.getElementById("rf-ocr-warning");
+            if (!rawText || !rawText.trim()) {
+                warnEl.style.display = "block";
+                warnEl.innerHTML = `<strong>OCR Notice:</strong> Backend OCR engine (${esc(rawOcr?.engine_name || "FallbackOCR")}) returned no text for this image. Text fields show <em>Not detected</em>.`;
+            } else {
+                warnEl.style.display = "none";
+            }
+
+            document.getElementById("rf-summary-meta").innerHTML = `
+                <div><strong>Validation Run ID:</strong> #${valId}</div>
+                <div><strong>Review Status:</strong> ${esc(runData.latest_review_status || "PENDING_REVIEW")}</div>
+                <div><strong>Processing Time:</strong> ${runData.processing_time_ms ? runData.processing_time_ms + " ms" : "Not reported"}</div>
+            `;
+
+            document.getElementById("rf-btn-pdf").href = `/api/reports/${valId}/pdf`;
+            document.getElementById("rf-btn-json").href = `/api/export/${valId}?format=json`;
+
+            const fields = rfJson.fields || [];
+            const detectedCount = fields.filter(f => f.status === "DETECTED").length;
+            document.getElementById("rf-detected-count").textContent = `${detectedCount} / ${fields.length} Detected`;
+
+            const listEl = document.getElementById("rf-fields-list");
+            listEl.innerHTML = "";
+            fields.forEach(f => {
+                const div = document.createElement("div");
+                div.className = `field-card-item ${f.status === "DETECTED" ? "status-compliant" : (f.status === "FAILED" ? "status-error" : "status-warning")}`;
+                const badgeCls = f.status === "DETECTED" ? "badge-compliant" : (f.status === "FAILED" ? "badge-non-compliant" : "badge-neutral");
+                const confStr = f.confidence !== null && f.confidence !== undefined ? `${(f.confidence * 100).toFixed(1)}% confidence` : "Confidence not reported";
+                div.innerHTML = `
+                    <div class="field-card-top-row">
+                        <div>
+                            <div class="field-card-name">${esc(f.name)}</div>
+                            <div class="field-card-reg">${esc(f.regulation)}</div>
+                        </div>
+                        <span class="badge ${badgeCls}">${esc(f.status)}</span>
+                    </div>
+                    <div class="field-card-value-box">
+                        <span>${f.value ? esc(f.value) : '<em style="color: var(--color-text-muted);">Not detected</em>'}</span>
+                    </div>
+                    <div class="field-card-meta-row"><span>${confStr}</span></div>
+                `;
+                listEl.appendChild(div);
+            });
+
+            const symEl = document.getElementById("rf-symbols-list");
+            symEl.innerHTML = "";
+            const syms = runData.symbols || [];
+            if (syms.length === 0) {
+                symEl.innerHTML = `<span style="font-size: 0.82rem; color: var(--color-text-muted);">Not detected</span>`;
+            } else {
+                syms.forEach(s => {
+                    const chip = document.createElement("span");
+                    chip.className = "badge badge-info";
+                    chip.textContent = `${s.display_name || s.symbol_id} (${(Number(s.confidence || 0) * 100).toFixed(1)}%)`;
+                    symEl.appendChild(chip);
+                });
+            }
+
+            const chkEl = document.getElementById("rf-checks-list");
+            chkEl.innerHTML = "";
+            (runData.checks || []).forEach(c => {
+                const row = document.createElement("div");
+                row.style.padding = "0.55rem 0.75rem";
+                row.style.border = "1px solid var(--color-border)";
+                row.style.borderLeft = `3px solid ${c.passed ? "var(--color-success)" : "var(--color-error)"}`;
+                row.style.borderRadius = "var(--radius-xs)";
+                row.style.fontSize = "0.8rem";
+                row.innerHTML = `
+                    <div style="display: flex; justify-content: space-between; font-weight: 700;">
+                        <span>${esc(c.rule_id)}: ${esc(c.rule_name)}</span>
+                        <span class="badge ${c.passed ? "badge-compliant" : "badge-non-compliant"}">${c.passed ? "PASS" : "FAIL"}</span>
+                    </div>
+                    <div style="color: var(--color-text-muted); margin-top: 0.15rem;">Observed: ${esc(c.observed_value || "Not detected")}</div>
+                `;
+                chkEl.appendChild(row);
+            });
+        }
+    </script>
+</body>
+</html>

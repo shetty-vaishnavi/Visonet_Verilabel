@@ -1,0 +1,548 @@
+{
+  "label_id": 13,
+  "file_name": "TC01_compliant.png",
+  "file_hash": "9cee5d193746e402f8525aa35a2f4451cbae8036d18cbd8dd57c2d487c4693c6",
+  "verdict": "COMPLIANT",
+  "compliance_score": 100.0,
+  "total_checks": 15,
+  "passed_checks": 15,
+  "failed_checks": 0,
+  "critical_violations_count": 0,
+  "major_violations_count": 0,
+  "minor_violations_count": 0,
+  "checks": [
+    {
+      "rule_id": "MAND-001",
+      "rule_name": "Product Name Presence",
+      "category": "MANDATORY_FIELDS",
+      "standard": "FDA 21 CFR 801.60 / EU MDR 23.2(a)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "CardioPulse Catheter System 6Fr",
+      "expected_condition": "Prominent product or trade name must be present on label",
+      "message": "Product name successfully identified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "MAND-002",
+      "rule_name": "Manufacturer Name Presence",
+      "category": "MANDATORY_FIELDS",
+      "standard": "FDA 21 CFR 801.1 / EU MDR 23.2(b)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "Brahmastra MedTech Corp.",
+      "expected_condition": "Legal manufacturer name or factory symbol must be present",
+      "message": "Manufacturer identification verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "MAND-003",
+      "rule_name": "Expiration Date Presence",
+      "category": "MANDATORY_FIELDS",
+      "standard": "FDA 21 CFR 801 / EU MDR 23.2(i)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "2028-06-30",
+      "expected_condition": "Clear expiration / use-by date must be present",
+      "message": "Expiration date '2028-06-30' identified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "MAND-004",
+      "rule_name": "Batch / Lot Number Presence",
+      "category": "MANDATORY_FIELDS",
+      "standard": "FDA 21 CFR 801 / EU MDR 23.2(g)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "BATCH-8842",
+      "expected_condition": "Lot or batch number must be present for device traceability",
+      "message": "Batch/Lot 'BATCH-8842' identified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "MAND-005",
+      "rule_name": "Safety Warnings & Precautions",
+      "category": "MANDATORY_FIELDS",
+      "standard": "FDA 21 CFR 801.109 / EU MDR 23.2(m)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "1 warning statements found",
+      "expected_condition": "Device safety precautions, warnings, or caution statements required",
+      "message": "Safety warnings or precautionary indicators verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "MAND-006",
+      "rule_name": "Storage Conditions",
+      "category": "MANDATORY_FIELDS",
+      "standard": "EU MDR 23.2(k) / ISO 15223-1",
+      "severity": "MAJOR",
+      "passed": true,
+      "observed_value": "Keep dry / protect from moisture",
+      "expected_condition": "Storage temperature or handling condition instructions required",
+      "message": "Storage instructions verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "DATE-001",
+      "rule_name": "Expiration Date Future Validity",
+      "category": "DATE_INTEGRITY",
+      "standard": "ISO 15223-1 5.1.4 / FDA 21 CFR 801",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "2028-06-30",
+      "expected_condition": "Expiration date must be in the future relative to current date",
+      "message": "Expiration date is currently valid.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "DATE-002",
+      "rule_name": "Chronological Date Order",
+      "category": "DATE_INTEGRITY",
+      "standard": "ISO 15223-1 / EU MDR",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "MFG: 2026-01-15 | EXP: 2028-06-30",
+      "expected_condition": "Manufacturing date must strictly precede expiration date",
+      "message": "Date sequence verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "UDI-001",
+      "rule_name": "UDI Carrier Presence",
+      "category": "UDI_VALIDATION",
+      "standard": "FDA 21 CFR Part 830 / EU MDR Article 27",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "1 barcode(s) scanned",
+      "expected_condition": "Machine-readable UDI barcode carrier must be present on label",
+      "message": "UDI barcode carrier successfully detected.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "UDI-002",
+      "rule_name": "UDI DI Checksum Validity",
+      "category": "UDI_VALIDATION",
+      "standard": "GS1 General Specifications / FDA 21 CFR 830",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "DI: 00847239012349 (Checksum Valid)",
+      "expected_condition": "UDI Device Identifier must pass GS1 Modulo-10 checksum validation",
+      "message": "GS1 Modulo-10 checksum verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "UDI-003",
+      "rule_name": "UDI Lot Cross-Match",
+      "category": "UDI_VALIDATION",
+      "standard": "FDA 21 CFR 830.20 / EU MDR 23.2(h)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "UDI LOT: BATCH-8842 vs Text LOT: BATCH-8842",
+      "expected_condition": "UDI Barcode Lot number must match label text Lot number",
+      "message": "Lot number consistency verified across barcode and text.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "UDI-004",
+      "rule_name": "UDI Expiry Date Cross-Match",
+      "category": "UDI_VALIDATION",
+      "standard": "FDA 21 CFR 830.20 / EU MDR 23.2(h)",
+      "severity": "CRITICAL",
+      "passed": true,
+      "observed_value": "UDI EXP: 2028-06-28 vs Text EXP: 2028-06-30",
+      "expected_condition": "UDI Barcode Expiration date must match label text Expiration date",
+      "message": "Expiration date consistency verified across barcode and text.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "SYM-001",
+      "rule_name": "Sterile Claim Symbol Verification",
+      "category": "SYMBOL_VERIFICATION",
+      "standard": "ISO 15223-1 5.2.1 / EU MDR 23.2(l)",
+      "severity": "MAJOR",
+      "passed": true,
+      "observed_value": "ISO Sterile symbol detected",
+      "expected_condition": "Devices claiming sterility must display the official ISO 15223-1 [STERILE] symbol",
+      "message": "Sterile symbol presence verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "SYM-002",
+      "rule_name": "Single-Use Symbol Verification",
+      "category": "SYMBOL_VERIFICATION",
+      "standard": "ISO 15223-1 5.4.2 / EU MDR 23.2(n)",
+      "severity": "MAJOR",
+      "passed": true,
+      "observed_value": "Do Not Re-use symbol detected",
+      "expected_condition": "Single-use devices must bear the ISO 15223-1 'Do Not Re-use' (2 with slash) symbol",
+      "message": "Single-use symbol verified.",
+      "remediation_hint": null
+    },
+    {
+      "rule_id": "SYM-004",
+      "rule_name": "CE Conformity Mark",
+      "category": "SYMBOL_VERIFICATION",
+      "standard": "EU MDR Article 20 / Regulation (EC) No 765/2008",
+      "severity": "MAJOR",
+      "passed": true,
+      "observed_value": "CE mark symbol detected",
+      "expected_condition": "CE mark emblem must be present on label artwork",
+      "message": "CE conformity emblem verified.",
+      "remediation_hint": null
+    }
+  ],
+  "extracted_fields": {
+    "product_name": "CardioPulse Catheter System 6Fr",
+    "manufacturer_name": "Brahmastra MedTech Corp.",
+    "manufacturer_address": null,
+    "manufacturing_date": "2026-01-15",
+    "expiry_date": "2028-06-30",
+    "lot_number": "BATCH-8842",
+    "serial_number": null,
+    "catalog_number": "90210-A",
+    "udi_di": null,
+    "udi_carrier": null,
+    "storage_conditions": "Keep dry / protect from moisture",
+    "temperature_min_c": null,
+    "temperature_max_c": null,
+    "is_sterile": true,
+    "sterilization_method": "STERILE",
+    "is_single_use": true,
+    "warnings": [
+      "Caution: Federal law restricts this device to sale by or on order of physician. Rx Only."
+    ],
+    "instructions_for_use": "Consult instructions for use",
+    "ce_mark_number": "CE 0123",
+    "is_rx_only": true,
+    "raw_text": "CardioPulse Catheter System 6Fr\nSterile Intravascular Delivery Catheter\nManufactured by: Brahmastra MedTech Corp.\n100 Innovation Way, Bengaluru, Karnataka, India\nREF 90210-A\nLOT BATCH-8842\nMFG 2026-01-15\nEXP 2028-06-30\nSTERILE EO\nStore between 2°C and 25°C. Keep dry.\nCaution: Federal law restricts this device to sale by or on order of physician. Rx Only.\nSterile unless package is opened or damaged. Single use only. Do not reuse.\nConsult instructions for use before operation.\nCE 0123\n(01)00847239012349(17)280630(10)BATCH-8842",
+    "field_confidences": {
+      "product_name": 0.9,
+      "manufacturer_name": 0.88,
+      "expiry_date": 0.95,
+      "manufacturing_date": 0.92,
+      "lot_number": 0.95,
+      "catalog_number": 0.95,
+      "storage_conditions": 0.85,
+      "is_sterile": 0.95,
+      "is_single_use": 0.95,
+      "is_rx_only": 0.95,
+      "ce_mark_number": 0.98
+    }
+  },
+  "detected_symbols": [
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.9663,
+      "bbox": {
+        "x": 25,
+        "y": 575,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "manufacturer",
+      "display_name": "Manufacturer",
+      "iso_code": "5.1.1",
+      "confidence": 0.9657,
+      "bbox": {
+        "x": 25,
+        "y": 120,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "temperature_limit",
+      "display_name": "Temperature limit",
+      "iso_code": "5.3.7",
+      "confidence": 0.9651,
+      "bbox": {
+        "x": 155,
+        "y": 400,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "rx_only",
+      "display_name": "Prescription Only",
+      "iso_code": "FDA-Rx",
+      "confidence": 0.9626,
+      "bbox": {
+        "x": 200,
+        "y": 575,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "use_by_date",
+      "display_name": "Use-by date",
+      "iso_code": "5.1.4",
+      "confidence": 0.9575,
+      "bbox": {
+        "x": 25,
+        "y": 335,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "do_not_reuse",
+      "display_name": "Do not re-use",
+      "iso_code": "5.4.2",
+      "confidence": 0.9535,
+      "bbox": {
+        "x": 90,
+        "y": 400,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "batch_code",
+      "display_name": "Batch code",
+      "iso_code": "5.1.5",
+      "confidence": 0.9303,
+      "bbox": {
+        "x": 25,
+        "y": 245,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "catalogue_number",
+      "display_name": "Catalogue number",
+      "iso_code": "5.1.6",
+      "confidence": 0.9285,
+      "bbox": {
+        "x": 25,
+        "y": 185,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "sterile",
+      "display_name": "Sterile",
+      "iso_code": "5.2.1",
+      "confidence": 0.9202,
+      "bbox": {
+        "x": 25,
+        "y": 400,
+        "width": 52,
+        "height": 52
+      },
+      "scale": 0.65
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.7426,
+      "bbox": {
+        "x": 85,
+        "y": 584,
+        "width": 36,
+        "height": 36
+      },
+      "scale": 0.45
+    },
+    {
+      "symbol_name": "rx_only",
+      "display_name": "Prescription Only",
+      "iso_code": "FDA-Rx",
+      "confidence": 0.6103,
+      "bbox": {
+        "x": 75,
+        "y": 185,
+        "width": 44,
+        "height": 44
+      },
+      "scale": 0.55
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.6045,
+      "bbox": {
+        "x": 142,
+        "y": 296,
+        "width": 36,
+        "height": 36
+      },
+      "scale": 0.45
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5845,
+      "bbox": {
+        "x": 111,
+        "y": 296,
+        "width": 36,
+        "height": 36
+      },
+      "scale": 0.45
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5761,
+      "bbox": {
+        "x": 63,
+        "y": 457,
+        "width": 28,
+        "height": 28
+      },
+      "scale": 0.35
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5742,
+      "bbox": {
+        "x": 154,
+        "y": 246,
+        "width": 44,
+        "height": 44
+      },
+      "scale": 0.55
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5587,
+      "bbox": {
+        "x": 183,
+        "y": 127,
+        "width": 28,
+        "height": 28
+      },
+      "scale": 0.35
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5379,
+      "bbox": {
+        "x": 681,
+        "y": 312,
+        "width": 28,
+        "height": 28
+      },
+      "scale": 0.35
+    },
+    {
+      "symbol_name": "rx_only",
+      "display_name": "Prescription Only",
+      "iso_code": "FDA-Rx",
+      "confidence": 0.5372,
+      "bbox": {
+        "x": 75,
+        "y": 335,
+        "width": 44,
+        "height": 44
+      },
+      "scale": 0.55
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5353,
+      "bbox": {
+        "x": 132,
+        "y": 584,
+        "width": 36,
+        "height": 36
+      },
+      "scale": 0.45
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5274,
+      "bbox": {
+        "x": 178,
+        "y": 340,
+        "width": 36,
+        "height": 36
+      },
+      "scale": 0.45
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5272,
+      "bbox": {
+        "x": 91,
+        "y": 250,
+        "width": 36,
+        "height": 36
+      },
+      "scale": 0.45
+    },
+    {
+      "symbol_name": "ce_mark",
+      "display_name": "CE Conformity",
+      "iso_code": "EU-CE",
+      "confidence": 0.5256,
+      "bbox": {
+        "x": 208,
+        "y": 336,
+        "width": 44,
+        "height": 44
+      },
+      "scale": 0.55
+    }
+  ],
+  "barcodes_scanned": [
+    {
+      "data": "(01)00847239012349(17)280630(10)BATCH-8842",
+      "type": "QRCODE",
+      "bbox": {
+        "x": 673,
+        "y": 183,
+        "width": 105,
+        "height": 105
+      }
+    }
+  ],
+  "udi_details": {
+    "raw_carrier": "(01)00847239012349(17)280630(10)BATCH-8842",
+    "standard": "GS1",
+    "device_identifier_di": "00847239012349",
+    "is_di_checksum_valid": true,
+    "expiry_date_pi": "2028-06-28",
+    "lot_number_pi": "BATCH-8842",
+    "serial_number_pi": null,
+    "manufacturing_date_pi": null,
+    "is_valid_format": true,
+    "validation_errors": [],
+    "validation_warnings": []
+  },
+  "processing_time_ms": 8743.39,
+  "timestamp": "2026-11-19T13:05:48.423709+00:00"
+}
