@@ -3,7 +3,7 @@
     name: verilabel-ai
     runtime: python
     buildCommand: pip install -r requirements.txt
-    startCommand: bash start.sh
+    startCommand: cd verilabel_ai_project/verilabel_ai/verilabel_app && uvicorn server:app --host 0.0.0.0 --port $PORT
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.0
